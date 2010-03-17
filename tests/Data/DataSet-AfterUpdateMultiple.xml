@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<table name="Products">
+		<column>ProductID</column>
+		<column>ProductName</column>
+		<column>SupplierID</column>
+		<column>CategoryID</column>
+		<column>QuantityPerUnit</column>
+		<column>UnitPrice</column>
+		<row>
+			<value>1</value>
+			<value>Chai</value>
+			<value>1</value>
+			<value>1</value>
+			<value>10 boxes x 20 bags</value>
+			<value>18.0</value>
+		</row>
+		<row>
+			<value>2</value>
+			<value>Chef Anton's Cajun Seasoning</value>
+			<value>2</value>
+			<value>2</value>
+			<value>48 - 5.5 oz jars</value>
+			<value>23.5</value>
+		</row>
+		<row>
+			<value>3</value>
+			<value>Northwoods Cranberry Sauce</value>
+			<value>3</value>
+			<value>2</value>
+			<value>12 - 12 oz jars</value>
+			<value>40.0</value>
+		</row>
+		<row>
+			<value>4</value>
+			<value>Rössle Sauerkraut</value>
+			<value>12</value>
+			<value>7</value>
+			<value>15 - 825 g cans</value>
+			<value>32.25</value>
+		</row>
+		<row>
+			<value>5</value>
+			<value>Côte de Blaye</value>
+			<value>18</value>
+			<value>1</value>
+			<value>12 - 75 cl bottles</value>
+			<value>263.5</value>
+		</row>
+		<row>
+			<value>6</value>
+			<value>Ravioli Angelo</value>
+			<value>26</value>
+			<value>5</value>
+			<value>24 - 250 g pkgs</value>
+			<value>19.5</value>
+		</row>
+	</table>
+</dataset>
