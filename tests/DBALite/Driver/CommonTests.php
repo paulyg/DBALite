@@ -91,7 +91,24 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 		$data1 = array(7, 'Ipoh Coffee', 20, 1, '16 - 500 g tins', 46.0);
 		$stmt->execute($data1);
 
-		$data2 = array(
+		$data2 = array(8, 'Filo Mix', 24, 5, '16 - 2 kg boxes', 7.99);
+		$stmt->execute($data2);
+
+		$this->assertDataSetsEqual(
+			$this->createXMLDataSet($expected_file),
+			$this->getConnection()->createDataSet(array('Products'))
+		);
+
+		return $stmt;
+	}
+
+	/**
+	 * @depends testPrepareInsert
+	 * @expectedException DBALite_Exception
+	 */
+	public function testPrepareInsertBadParamType(DBALite_Statement $stmt)
+	{
+		$bad_data = array(
 			'ProductID' => 8,
 			'ProductName' => 'Filo Mix',
 			'SupplierID' => 24,
@@ -99,12 +116,7 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 			'QuantityPerUnit' => '16 - 2 kg boxes',
 			'UnitPrice' => 7.99
 		);
-		$stmt->execute($data2);
-
-		$this->assertDataSetsEqual(
-			$this->createXMLDataSet($expected_file),
-			$this->getConnection()->createDataSet(array('Products'))
-		);
+		$stmt->execute($bad_data);
 	}
 
 	public function testUpdate()
@@ -133,17 +145,29 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 		$data1 = array('48 - 5.5 oz jars', 23.5, 2);
 		$stmt->execute($data1);
 
-		$data2 = array(
-			'QuantityPerUnit' => '15 - 825 g cans',
-			'UnitPrice' => 32.25,
-			'ProductID' => 4
-		);
+		$data2 = array('15 - 825 g cans', 32.25, 4);
 		$stmt->execute($data2);
 
 		$this->assertDataSetsEqual(
 			$this->createXMLDataSet($expected_file),
 			$this->getConnection()->createDataSet(array('Products'))
 		);
+
+		return $stmt;
+	}
+
+	/**
+	 * @depends testPrepareUpdate
+	 * @expectedException DBALite_Exception
+	 */
+	public function testPrepareUpdateBadParams(DBALite_Statement $stmt)
+	{
+		$bad_data = array(
+			'QuantityPerUnit' => '15 - 825 g cans',
+			'UnitPrice' => 32.25,
+			'ProductID' => 4
+		);
+		$stmt->execute($bad_data);
 	}
 
 	public function testDelete()

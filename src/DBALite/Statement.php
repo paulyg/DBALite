@@ -106,23 +106,24 @@ class DBALite_Statement
 	 * Stores PDO Statement object and fetch mode in instantiation.
 	 *
 	 * @param PDOStatement $stmt        PDOStatement object.
-	 * @param integer      $fetchMode   Current default fetch mode from 
-	 *                                  DBALite_DriverAbstract instance.
 	 * @param string       $sql         The SQL used to create this statement,
 	 *                                  useful for debugging.
-	 * @param int          $placeholder OPTIONAL: hint of which placeholder type
-	 *                                  is used in query.
+	 * @param integer      $fetchMode   Current default fetch mode from 
+	 *                                  DBALite_DriverAbstract instance.
+	 * @param int          $placeholder OPTIONAL: DBALite::PARAM_* constant
+	 *                                  hint of which placeholder type is used
+	 *                                  in query.
 	 * @return DBALite_Statement
 	 */
-	public function __construct($stmt, $fetchMode, $sql, $placeholder = null)
+	public function __construct($stmt, $sql, $fetchMode, $placeholder = null)
 	{
 		if (! ($stmt instanceof PDOStatement)) {
 			throw new DBALite_Exception("The object passed to DBALite_Statement was not a PDOStatement object.");
 		}
 
 		$this->_stmt = $stmt;
-		$this->_fetchMode = $fetchMode;
 		$this->_sql = $sql;
+		$this->_fetchMode = $fetchMode;
 		$this->_placeholder = $placeholder;
 	}
 
@@ -201,27 +202,30 @@ class DBALite_Statement
 	 *
 	 * @return int
 	 */
-	protected function _checkFetchMode($modeName)
+	protected function _checkFetchMode($mode)
 	{
-		if ($modeName === null) {
+		if ($mode === null) {
 			return $this->_fetchMode;
-		} else {
-			if (array_key_exists($modeName, self::$fetchModes)) {
+		} elseif (isset(self::$fetchModes[$mode])) {
 			return self::$fetchModes[$mode];
-			} else {
-				throw new DBALite_Execption("Fetch mode '$mode' not supported or unknown.");
-			}
+		} elseif (in_array($mode, self::$fetchModes)) {
+			return $mode;
+		} else {
+			throw new DBALite_Execption("Fetch mode '$mode' not supported or unknown.");
 		}
 	}
 
 	/**
 	 * Execute a prepared statement and return resutls.
 	 *
-	 * @param array $bind OPTIONAL: Values to bind into the query.
+	 * @param mixed $bind OPTIONAL: Values to bind into the query.
 	 * @return bool       Success or failure.
 	 */
 	public function execute($bind = null)
 	{
+		if (!is_null($bind) && !is_array($bind)) {
+			$bind = (array) $bind;
+		}
         if (is_array($bind)) {
 			foreach ($bind as $name => $value) {
 				$newName =  $this->_checkParam($name);
@@ -231,6 +235,7 @@ class DBALite_Statement
 				}
 			}
 		}
+
 
 		try {
 			if (is_array($bind)) {
@@ -340,11 +345,11 @@ class DBALite_Statement
 	 */
 	protected function _checkParam($param)
 	{
-		if (is_int($param) && ($this->_placeholder != DBALite::PARAM_POSITIONAL)) {
-			throw new DBALite_Exception("The prepared query used positional (?) parameters and you passed a named parameter");
+		if (is_int($param) && ($this->_placeholder == DBALite::PARAM_NAMED)) {
+			throw new DBALite_Exception("The prepared query used named parameters and you passed a positional parameter argument.");
 		} elseif (is_string($param)) {
-			if ($this->_placeholder != DBALite::PARAM_NAMED) {
-				throw new DBALite_Exception("The prepared query used named parameters and you passed a positional parameter");
+			if ($this->_placeholder == DBALite::PARAM_POSITIONAL) {
+				throw new DBALite_Exception("The prepared query used positional (?) parameters and you passed a named parameter");
 			}
 			if  ($param[0] != ':') {
             	$param = ":$param";

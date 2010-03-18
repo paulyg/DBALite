@@ -199,19 +199,23 @@ abstract class DBALite_DriverAbstract
 		$val = strtolower($val);
 		switch ($key) {
 			case 'fetchmode':
-				if (array_key_exists($val, self::$fetchModes)) {
+				if (isset(self::$fetchModes[$val])) {
 					$this->_fetchMode = self::$fetchModes[$val];
+				} elseif (in_array($val, self::$fetchModes, true)) {
+					$this->_fetchMode = $val;
 				} else {
 					throw new DBALite_Exception("Fetch mode '$val' not supported or unknown.");
 				}
 				break;
 			case 'casefolding':
-				if (array_key_exists($val, self::$foldingModes)) {
+				if (isset(self::$foldingModes[$val])) {
 					$this->_caseFolding = self::$foldingModes[$val];
+				} elseif (array_key_exists($val, self::$foldingModes)) {
+					$this->_caseFolding = $val;
 				} else {
 					throw new DBALite_Exception("Fetch mode '$val' not supported or unknown.");
 				}
-				if (! empty($this->_pdo)) {
+				if (isset($this->_pdo)) {
 					$this->_pdo->setAttribute(PDO::ATTR_CASE, $this->_caseFolding);
 				}
 				break;
@@ -300,7 +304,7 @@ abstract class DBALite_DriverAbstract
 			 . '(' . implode(', ', $cols) . ')'
 			 . 'VALUES (' . implode(', ', $vals) . ')';
 
-		$stmt = $this->prepare($sql);
+		$stmt = $this->prepare($sql, DBALite::PARAM_POSITIONAL);
 
 		return $stmt;
 	}
@@ -351,7 +355,7 @@ abstract class DBALite_DriverAbstract
 			 . ' SET ' . implode(', ', $set)
 			 . (($where) ? " WHERE $where" : '');
 
-		$stmt = $this->prepare($sql);
+		$stmt = $this->prepare($sql, DBALite::PARAM_POSITIONAL);
 
 		return $stmt;
 	}
@@ -477,7 +481,7 @@ abstract class DBALite_DriverAbstract
 			echo $sql;
 			throw new DBALite_Exception('Error executing PDO->prepare()', $e);
 		}
-		$dbalite_stmt = new DBALite_Statement($pdo_stmt, $this->_fetchMode, $sql, $placeholder);
+		$dbalite_stmt = new DBALite_Statement($pdo_stmt, $sql, $this->_fetchMode, $placeholder);
 		return $dbalite_stmt;
 	}
 
@@ -501,7 +505,7 @@ abstract class DBALite_DriverAbstract
 			} catch (PDOException $e) {
 				throw new DBALite_Exception('Error executing PDO->query()', $e);
 			}
-			$dbalite_stmt = new DBALite_Statement($pdo_stmt, $this->_fetchMode, $sql, $placeholder);
+			$dbalite_stmt = new DBALite_Statement($pdo_stmt, $sql, $this->_fetchMode, $placeholder);
 		}
 		return $dbalite_stmt;
 	}
