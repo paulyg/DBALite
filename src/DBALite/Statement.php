@@ -83,6 +83,7 @@ class DBALite_Statement
 	protected static $fetchModes = array(
 		'assoc'		=> PDO::FETCH_ASSOC,
 		'both'		=> PDO::FETCH_BOTH,
+		'bound'		=> PDO::FETCH_BOUND,
 		'default'	=> PDO::FETCH_ASSOC,
 		'lazy'		=> PDO::FETCH_LAZY,
 		'num'		=> PDO::FETCH_NUM,
@@ -179,11 +180,7 @@ class DBALite_Statement
 	 */
 	public function setFetchMode($mode)
 	{
-		if (array_key_exists($mode, self::fetchModes)) {
-			$this->_fetchMode = self::$fetchModes[$mode];
-		} else {
-			throw new DBALite_Execption("Fetch mode '$mode' not supported or unknown.");
-		}
+		$this->_fetchMode = $this->_checkFetchMode($mode);
 	}
 
 	/**
@@ -211,7 +208,7 @@ class DBALite_Statement
 		} elseif (in_array($mode, self::$fetchModes)) {
 			return $mode;
 		} else {
-			throw new DBALite_Execption("Fetch mode '$mode' not supported or unknown.");
+			throw new DBALite_Exception("Fetch mode '$mode' not supported or unknown.");
 		}
 	}
 
@@ -253,21 +250,19 @@ class DBALite_Statement
 	 * Note: This method exists because pass-by-reference won't work with
 	 * call_user_func_array();
      *
-     * @param string $column Name the column in the result set, either by position
-     *                       or by name. Note: if by name must match case.
-     * @param mixed  $param  Reference to the PHP variable containing the value.
-     * @param mixed  $type   OPTIONAL: PDO::PARAM_* Type hint.
-     * @return bool          TRUE on success, FALSE on failure
+     * @param string $column   Name the column in the result set, either by position
+     *                         or by name. Note: if by name must match case.
+     * @param mixed  $variable Reference to the PHP variable containing the value.
+     * @param mixed  $type     OPTIONAL: PDO::PARAM_* Type hint.
+     * @return bool            TRUE on success, FALSE on failure
      */
-    public function bindColumn($column, &$param, $type = null)
+    public function bindColumn($column, &$variable, $type = null)
     {
-		$parameter = $this->_checkParam($parameter);
-
         try {
             if (is_null($type)) {
-                return $this->_stmt->bindColumn($column, $param);
+                return $this->_stmt->bindColumn($column, $variable);
             } else {
-                return $this->_stmt->bindColumn($column, $param, $type);
+                return $this->_stmt->bindColumn($column, $variable, $type);
             }
         } catch (PDOException $e) {
             throw new DBALite_Exception("Error binding column '$column' to PHP variable", $e);
@@ -453,23 +448,23 @@ class DBALite_Statement
 	 /**
 	  * Returns the SQL used to generate the statement, or the SQL as transformed by PDO.
 	  *
-	  * By default, or with an argument of 'dbalite' the original SQL string is returned.
-	  * By passing 'pdo' as the argument it will return the SQL string in PDO which may
-	  * have been rewritten to deal with binding.
+	  * By default, or with an argument of 'pdo' as the argument it will return the
+	  * SQL string in PDO which may have been rewritten to deal with binding.
+	  * By passing an argument of 'dbalite' the original SQL string is returned.
 	  *
 	  * @param string $spec
 	  * @return string
 	  */
-	 public function sql($spec)
+	 public function getSql($spec = 'pdo')
 	 {
 		 switch ($spec) {
-			 case 'pdo':
+			case 'dbalite':
+				return $this->_sql;
+				break;
+			case 'pdo':
 			 	return $this->_stmt->queryString;
 				break;
-			case 'dbalite':
-			default:
-				return $this->_sql;
-		}
+		 }
 	 }
 }
 # vim:ff=unix:ts=4:sw=4:

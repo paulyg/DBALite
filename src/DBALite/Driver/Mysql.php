@@ -59,32 +59,40 @@
 
 
 /**
- * DBALite driver for MySQL databases
+ * DBALite driver for MySQL databases.
  * @package DBALite
  * @subpackage Drivers
  */
 class DBALite_Driver_Mysql extends DBALite_DriverAbstract
 {
 	/**
-	 * Name of driver (aka brand) of database in use
+	 * Name of driver (aka brand) of database in use.
 	 * @var string
 	 */
 	protected $_driver = 'mysql';
 
 	/**
-	 * Character to use when quoting identifiers
+	 * Character to use when quoting strings in queries.
+	 *
+	 * For info only. @see DBALite_DriverAbstract::quote
+	 * @var string
+	 */
+	protected $_quoteChar = '\'';
+
+	/**
+	 * Character to use when quoting identifiers.
 	 * @var string
 	 */
 	protected $_quoteIdentChar = '`';
 
 	/**
-	 * The preferred method of placeholding data for binding in prepared statements
+	 * The native method of placeholding data for binding in prepared statements.
 	 * @var int
 	 */
-	protected $_preferredPlaceholder = DBALite::PARAM_POSITIONAL;
+	protected $_nativePlaceholder = DBALite::PARAM_POSITIONAL;
 
 	/**
-	 * Special options availible to this driver
+	 * Special options availible to this driver.
 	 * @var array
 	 */
 	protected $_availibleOptions = array(
@@ -98,7 +106,7 @@ class DBALite_Driver_Mysql extends DBALite_DriverAbstract
 	);
 
 	/**
-	 * Creates connection to database
+	 * Creates connection to database.
 	 *
 	 * Configuration array must contain a 'dbname', 'username' and 'password'.
 	 * A 'host' key may be passed. If not present it will default to 'localhost'.
@@ -113,7 +121,7 @@ class DBALite_Driver_Mysql extends DBALite_DriverAbstract
 		if (isset($config['unix_socket'])) {
 			$dsn .= "unix_socket={$config['unix_socket']};";
 		} else {
-			if (! isset($config['host'])) {
+			if (!isset($config['host'])) {
 				$config['host'] = 'localhost';
 			}
 			$dsn .= "host={$config['host']};";
@@ -127,10 +135,10 @@ class DBALite_Driver_Mysql extends DBALite_DriverAbstract
 		$password = $config['password'];
 		
 		try {
-			if (empty($this->_driver_options)) {
+			if (empty($this->_driverOptions)) {
 				$conn = new PDO($dsn);
 			} else {
-				$conn = new PDO($dsn, $username, $password, $this->_driver_options);
+				$conn = new PDO($dsn, $username, $password, $this->_driverOptions);
 			}
 		} catch (PDOException $e) {
 			throw new DBALite_Exception("Connection to MySQL database failed.", $e);
@@ -148,11 +156,11 @@ class DBALite_Driver_Mysql extends DBALite_DriverAbstract
 	}
 
 	/**
-	 * Adds the SQL needed to do a limit query
+	 * Adds the SQL needed to do a limit query.
 	 *
-	 * @param string $sql SQL statement
-	 * @param integer $limit Number of rows to return
-	 * @param integer $offset Offset number of rows
+	 * @param string $sql SQL statement.
+	 * @param integer $limit Number of rows to return.
+	 * @param integer $offset Offset number of rows.
 	 * @return string
 	 */
 	public function limit($sql, $limit, $offset = 0)
@@ -165,13 +173,13 @@ class DBALite_Driver_Mysql extends DBALite_DriverAbstract
 	}
 
 	/**
-	 * Get the ID in the autoincrementing column for the last inserted row
+	 * Get the ID in the autoincrementing column for the last inserted row.
 	 *
-	 * @param string $seq Will be ignored, MySQL does not need this parameter
+	 * @param string $seq Will be ignored, MySQL does not need this parameter.
 	 */
 	public function lastInsertId($seq = '')
 	{
-		$this->_pdo->lastInsertId();
+		return $this->_pdo->lastInsertId();
 	}
 }
-# vim:ff=unix:ts=4:sw=4:fdm=marker:
+# vim:ff=unix:ts=4:sw=4:

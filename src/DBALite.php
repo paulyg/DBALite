@@ -199,13 +199,10 @@ class DBALite
 		$pdo_drivers = PDO::getAvailableDrivers();
 		$dbalite_drivers = array();
 		foreach (self::$supportedDrivers as $driver) {
-			$driver_file = 'drivers/DBALite_Driver' . ucfirst($driver) . '.php';
-			if (file_exists($driver_file)) {
-				if ($driver == 'mssql') {
-					$dbalite_drivers[$driver] = in_array('odbc', $pdo_drivers);
-				} else {
-					$dbalite_drivers[$driver] = in_array($driver, $pdo_drivers);
-				}
+			if ($driver == 'mssql') {
+				$dbalite_drivers[$driver] = in_array('odbc', $pdo_drivers);
+			} else {
+				$dbalite_drivers[$driver] = in_array($driver, $pdo_drivers);
 			}
 		}
 

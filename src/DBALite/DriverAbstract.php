@@ -132,9 +132,7 @@ abstract class DBALite_DriverAbstract
 	 */
 	public function __construct(array $config)
 	{
-		$this->_config = $config;
-
-		if (array_key_exists('options', $config) && is_array($config['options'])) {
+		if (isset($config['options']) && is_array($config['options'])) {
 			$options = $config['options'];
 			unset($config['options']);
 			foreach ($options as $key => $val) {
@@ -142,12 +140,14 @@ abstract class DBALite_DriverAbstract
 			}
 		}
 
-		if (array_key_exists('driver_options', $config) && is_array($config['driver_options'])) {
+		if (isset($config['driver_options']) && is_array($config['driver_options'])) {
 			$this->_driverOptions = $config['driver_options'];
 			unset($config['driver_options']);
 		}
 
-		$this->_connect($config);
+		$this->_config = $config;
+
+		$this->_connect($this->_config);
 
 		$this->_pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$this->_pdo->setAttribute(PDO::ATTR_CASE, $this->_caseFolding);
@@ -222,13 +222,6 @@ abstract class DBALite_DriverAbstract
 			case 'autoquoteidentifiers':
 				$this->_autoQuoteIdents = (($val) ? true : false);
 				break;
-			case 'preferredplaceholder':
-				if ($val == DBALite::PARAM_NAMED || DBALite::PARAM_POSITIONAL) {
-					$this->_preferredPlaceholder = $val;
-				} else {
-					throw new DBALite_Exception("Preferred placeholder must be one of 'DBALite::PARAM_NAMED' or 'DBALite::PARAM_POSITIONAL'.");
-				}
-				break;
 			default:
 				throw new DBALite_Exception("Option '$key' not supported.");
 		}
@@ -252,9 +245,6 @@ abstract class DBALite_DriverAbstract
 				break;
 			case 'autoquoteidentifiers':
 				return $this->_autoQuoteIdents;
-				break;
-			case 'preferredplaceholder':
-				return $this->_preferredPlaceholder;
 				break;
 			default:
 				throw new DBALite_Exception("Option '$key' not supported.");
@@ -478,7 +468,6 @@ abstract class DBALite_DriverAbstract
 		try {
 			$pdo_stmt = $this->_pdo->prepare($sql);
 		} catch (PDOException $e) {
-			echo $sql;
 			throw new DBALite_Exception('Error executing PDO->prepare()', $e);
 		}
 		$dbalite_stmt = new DBALite_Statement($pdo_stmt, $sql, $this->_fetchMode, $placeholder);

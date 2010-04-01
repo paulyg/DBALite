@@ -44,16 +44,10 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
         return $this->dataset;
 	}
 
-	public function testPrepare()
-	{
-		$this->markTestIncomplete();
-	}
-
-	public function testQuery()
-	{
-		$this->markTestIncomplete();
-	}
-
+	/**
+	 * @covers DBALite_DriverAbstract::prepare
+	 * @covers DBALite_Statement::execute
+	 */
 	public function testInsert()
 	{
 		$expected_file = DATA_DIR . 'DataSet-AfterInsert.xml';
@@ -71,6 +65,16 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 			$this->createXMLDataSet($expected_file),
 			$this->getConnection()->createDataSet(array('Products'))
 		);
+	}
+
+	/**
+	 * @expectedException DBALite_Exception
+	 */
+	public function testInsertBadArray()
+	{
+		$dbh = self::$dbaliteConn;
+		$data = array('ProductID' => 7, 'ProductName' => 'Chocolate Biscuits', 8, 3, '1 box', 100.55);
+		$dbh->insert('Products', $data);
 	}
 
 	public function testPrepareInsert()
@@ -129,6 +133,16 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 			$this->createXMLDataSet($expected_file),
 			$this->getConnection()->createDataSet(array('Products'))
 		);
+	}
+
+	/**
+	 * @expectedException DBALite_Exception
+	 */
+	public function testUpdateBadArray()
+	{
+		$dbh = self::$dbaliteConn;
+		$data = array('ProductName' => 'Chocolate Biscuits', 8, 'CategoryID' => 3, '1 box', 100.55);
+		$dbh->update('Products', $data, 'ProductID = 7');
 	}
 
 	public function testPrepareUpdate()
@@ -197,6 +211,10 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 		);
 	}
 
+	/**
+	 * @covers DBALite_DriverAbstract::query
+	 * @covers DBALite_Statement::fetchAll
+	 */
 	public function testQueryAll()
 	{
 		$expected = array(
@@ -236,7 +254,17 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 
 	public function testExecute()
 	{
-		$this->markTestIncomplete();
+		$expected_file = DATA_DIR . 'DataSet-AfterExecute.xml';
+		$dbh = self::$dbaliteConn;
+		$sql = 'INSERT INTO Products (ProductID, ProductName, SupplierID, CategoryID, '
+			. 'QuantityPerUnit, UnitPrice) VALUES (7, \'Tiramisu\', 11, 3, '
+			. '\'1 - 0.5 lb box\', 6.99)';
+		$dbh->execute($sql);
+
+		$this->assertDataSetsEqual(
+			$this->createXMLDataSet($expected_file),
+			$this->getConnection()->createDataSet(array('Products'))
+		);
 	}
 
 	public function testQuoteInt()

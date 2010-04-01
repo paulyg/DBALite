@@ -38,7 +38,6 @@ class DBALite_DriverAbstractTest extends PHPUnit_Framework_TestCase
 				'fetchmode' => 'obj',
 				'casefolding' => 'lower',
 				'autoquoteidentifiers' => false,
-				'preferredplaceholder' => DBALite::PARAM_POSITIONAL
 			)
 		);
 		self::$database = DBALite::factory($driver, $config);
@@ -57,12 +56,10 @@ class DBALite_DriverAbstractTest extends PHPUnit_Framework_TestCase
 		$dbh->setOption('fetchmode', 'assoc');
 		$dbh->setOption('casefolding', 'natural');
 		$dbh->setOption('autoquoteidentifiers', true);
-		$dbh->setOption('preferredplaceholder', DBALite::PARAM_NAMED);
 
 		$this->assertEquals('assoc', $dbh->getOption('fetchmode'));
 		$this->assertEquals('natural', $dbh->getOption('casefolding'));
 		$this->assertEquals(true, $dbh->getOption('autoquoteidentifiers'));
-		$this->assertEquals(DBALite::PARAM_NAMED, $dbh->getOption('preferredplaceholder'));
 	}
 
 	/**
@@ -81,6 +78,22 @@ class DBALite_DriverAbstractTest extends PHPUnit_Framework_TestCase
 	{
 		$dbh = self::$database;
 		$dbh->getOption('badparam');
+	}
+
+	public function testCall()
+	{
+		$dbh = self::$database;
+		$ret = $dbh->getAttribute(PDO::ATTR_SERVER_VERSION);
+		$this->assertEquals(true, $ret);
+	}
+
+	/**
+	 * @expectedException DBALite_Exception
+	 */
+	public function testBadCall()
+	{
+		$dbh = self::$database;
+		$ret = $dbh->munge('someparam');
 	}
 
 	public function testSelect()

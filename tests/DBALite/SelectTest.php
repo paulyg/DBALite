@@ -60,6 +60,24 @@ class DBALite_SelectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $sql);
 	}
 
+	public function testFromMultipleAllNoAlias()
+	{
+		$sel = self::$select;
+		$expected = "SELECT \"Products\".*, \"Suppliers\".*\nFROM \"Products\", \"Suppliers\"";
+		$sel->from('Products')->from('Suppliers');
+		$sql = $sel->build();
+		$this->assertEquals($expected, $sql);
+	}
+
+	public function testFromMultipleAllWithAlias()
+	{
+		$sel = self::$select;
+		$expected = "SELECT p.*, s.*\nFROM \"Products\" AS p, \"Suppliers\" AS s";
+		$sel->from(array('p' => 'Products'), '*')->from(array('s' => 'Suppliers'), '*');
+		$sql = $sel->build();
+		$this->assertEquals($expected, $sql);
+	}
+
 	public function testFromNamed()
 	{
 		$sel = self::$select;
@@ -83,10 +101,12 @@ class DBALite_SelectTest extends PHPUnit_Framework_TestCase
 	public function testJoinInner()
 	{
 		$sel = self::$select;
-		$expected = 'SELECT "Categories"."CategoryName", "Products".*' .
-					"\nFROM \"Categories\"" .
-					"\nINNER JOIN \"Products\" ON \"Categories\".\"CategoryID\" = \"Products\".\"CategoryID\"";
-		$sel->from('Categories', 'CategoryName')->join('inner', 'Products', 'Categories.CategoryID = Products.CategoryID');
+		$expected = 'SELECT "Products"."ProductID", "Products"."ProductName", "Products"."UnitCost", "Suppliers"."SupplierName"' .
+					"\nFROM \"Products\"" .
+					"\nINNER JOIN \"Suppliers\" ON \"Products\".\"SupplierID\" = \"Suppliers\".\"SupplierID\"";
+		$prodcols = array('ProductID', 'ProductName', 'UnitCost');
+		$supcols = array('SupplierName');
+		$sel->from('Products', $prodcols)->join('inner', 'Suppliers', array('Products.SupplierID', 'Suppliers.SupplierID'), $supcols);
 		$sql = $sel->build();
 		$this->assertEquals($expected, $sql);
 	}
@@ -94,10 +114,12 @@ class DBALite_SelectTest extends PHPUnit_Framework_TestCase
 	public function testJoinLeft()
 	{
 		$sel = self::$select;
-		$expected = 'SELECT "Products".*, "Suppliers"."CompanyName"' .
-		            "\nFROM \"Products\"" .
-					"\nLEFT JOIN \"Suppliers\" ON \"Products\".\"SuppliersID\" = \"Suppliers\".\"SupplierID\"";
-		$sel->from('Products')->join('left', 'Suppliers', 'Products.SupplierID = Suppliers.SupplierID', array('CompanyName'));
+		$expected = 'SELECT "Products"."ProductID", "Products"."ProductName", "Products"."UnitCost", "Suppliers"."SupplierName"' .
+					"\nFROM \"Products\"" .
+					"\nLEFT JOIN \"Suppliers\" ON \"Products\".\"SupplierID\" = \"Suppliers\".\"SupplierID\"";
+		$prodcols = array('ProductID', 'ProductName', 'UnitCost');
+		$supcols = array('SupplierName');
+		$sel->from('Products', $prodcols)->join('left', 'Suppliers', array('Products.SupplierID', 'Suppliers.SupplierID'), $supcols);
 		$sql = $sel->build();
 		$this->assertEquals($expected, $sql);
 	}
@@ -105,10 +127,12 @@ class DBALite_SelectTest extends PHPUnit_Framework_TestCase
 	public function testJoinRight()
 	{
 		$sel = self::$select;
-		$expected = 'SELECT "Products".*, "Suppliers.SupplierID"' .
-		            "\nFROM \"Suppliers\"" .
-					"\nRIGHT JOIN \"Products\" ON \"Suppliers\".\"SupplierID\" = \"Products\".\"SupplierID\"";;
-		$sel->from('Suppliers', array('SupplierID'))->join('right', 'Products', 'Suppliers.SupplierID = Products.SupplierID', '*');
+		$expected = 'SELECT "Products"."ProductID", "Products"."ProductName", "Products"."UnitCost", "Suppliers"."SupplierName"' .
+					"\nFROM \"Products\"" .
+					"\nRIGHT JOIN \"Suppliers\" ON \"Products\".\"SupplierID\" = \"Suppliers\".\"SupplierID\"";
+		$prodcols = array('ProductID', 'ProductName', 'UnitCost');
+		$supcols = array('SupplierName');
+		$sel->from('Products', $prodcols)->join('right', 'Suppliers', array('Products.SupplierID', 'Suppliers.SupplierID'), $supcols);
 		$sql = $sel->build();
 		$this->assertEquals($expected, $sql);
 	}
@@ -116,10 +140,10 @@ class DBALite_SelectTest extends PHPUnit_Framework_TestCase
 	public function testJoinFull()
 	{
 		$sel = self::$select;
-		$expected = 'SELECT "Order Details".*, "Products.*"' .
+		$expected = 'SELECT "Order Details".*, "Products".*' .
 		            "\nFROM \"Order Details\"" .
 					"\nFULL JOIN \"Products\" ON \"Order Details\".\"ProductID\" = \"Products\".\"ProductID\"";
-		$sel->from('Order Details')->join('full', 'Products', 'Order Details.ProductID = Products.ProductID');
+		$sel->from('Order Details')->join('full', 'Products', '"Order Details"."ProductID" = "Products"."ProductID"');
 		$sql = $sel->build();
 		$this->assertEquals($expected, $sql);
 	}
@@ -146,35 +170,18 @@ class DBALite_SelectTest extends PHPUnit_Framework_TestCase
 
 	public function testJoinTwoInners()
 	{
-		$this->markTestIncomplete();
 		$sel = self::$select;
-		$expected = '';
-		$sel->from()->join();
-		$sql = $sel->build();
-		$this->assertEquals($expected, $sql);
-	}
-
-	public function testJoinLeftAndNatural()
-	{
-		$this->markTestIncomplete();
-		$sel = self::$select;
-		$expected = '';
-		$sel->from()->join();
-		$sql = $sel->build();
-		$this->assertEquals($expected, $sql);
-	}
-
-	public function testJoinTripple()
-	{
-		$sel = self::$select;
-		$expected = 'SELECT "Employees"."FirstName", "Employees"."LastName", "Employees"."Title", ' .
-		            '"Territories"."TerritoryDescription"' .
-					"\nFROM \"Employees\"" .
-					"\nINNER JOIN \"EmployeeTerritories\" ON \"Employees\".\"EmployeeID\" = \"EmployeeTerritories\".\"EmployeeID\"" .
-					"\nINNER JOIN \"Territories\" ON \"EmployeeTerritories\".\"TerritoryID\" = \"Territories\".\"TerritoryID\"";
+		$expected = 'SELECT e."FirstName", e."LastName", e."Title", t."TerritoryDescription"' .
+					"\nFROM \"Employees\" AS e" .
+					"\nINNER JOIN \"EmployeeTerritories\" AS et ON \"Employees\".\"EmployeeID\" = \"EmployeeTerritories\".\"EmployeeID\"" .
+					"\nINNER JOIN \"Territories\" AS t ON \"EmployeeTerritories\".\"TerritoryID\" = \"Territories\".\"TerritoryID\"";
 		$employee_cols = array('FirstName', 'LastName', 'Title');
 		$territory_cols = array('TerritoryDescription');
-		$sel->from('Employees', $employee_cols)->join('inner', 'EmployeeTerritories', $territory_cols);
+		$employeeterritories_cond = array('Employees.EmployeeID', 'EmployeeTerritories.EmployeeID');
+		$territories_cond = array('EmployeeTerritories.TerritoryID', 'Territories.TerritoryID'); 
+		$sel->from('Employees AS e', $employee_cols);
+		$sel->join('inner', 'EmployeeTerritories AS et', $employeeterritories_cond, null);
+		$sel->join('inner', 'Territories AS t', $territories_cond, $territory_cols);
 		$sql = $sel->build();
 		$this->assertEquals($expected, $sql);
 	}

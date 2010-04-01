@@ -60,11 +60,26 @@ class DBALite_Driver_SqliteTest extends DBALite_Driver_CommonTests
 
 	public function testLimit()
 	{
-		$this->markTestIncomplete();
+		$dbh = self::$dbaliteConn;
+		$expected = "SELECT * FROM Products\nLIMIT 10 OFFSET 5";
+		$sql = 'SELECT * FROM Products';
+		$sql = $dbh->limit($sql, 10, 5);
+		$this->assertEquals($expected, $sql);
 	}
 
 	public function testLastInsertId()
 	{
-		$this->markTestIncomplete();
+		$dbh = self::$dbaliteConn;
+
+		$dbh->execute('DELETE FROM Cars');
+		$data = array(
+			'make' => 'Honda',
+			'model' => 'Prelude',
+			'trim' => 'Type SH',
+			'numcyls' => 4,
+			'enginesize' => 2.2
+		);
+		$dbh->insert('Cars', $data);
+		$this->assertEquals(1, $dbh->lastInsertId());
 	}
 }

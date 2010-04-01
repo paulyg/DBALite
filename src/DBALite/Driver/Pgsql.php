@@ -59,29 +59,37 @@
 
 
 /**
- * DBALite driver for PostgreSQL databases
+ * DBALite driver for PostgreSQL databases.
  * @package DBALite
  * @subpackage Drivers
  */
 class DBALite_Driver_Pqsql extends DBALite_DriverAbstract
 {
 	/**
-	 * Name of driver (aka brand) of database in use
+	 * Name of driver (aka brand) of database in use.
 	 * @var string
 	 */
 	protected $_driver = 'pgsql';
 
 	/**
-	 * Character to use when quoting identifiers
+	 * Character to use when quoting strings in queries.
+	 *
+	 * For info only. @see DBALite_DriverAbstract::quote
+	 * @var string
+	 */
+	protected $_quoteChar = '\'';
+
+	/**
+	 * Character to use when quoting identifiers.
 	 * @var string
 	 */
 	protected $_quoteIdentChar = '"';
 
 	/**
-	 * The preferred method of placeholding data for binding in prepared statements
+	 * The native method of placeholding data for binding in prepared statements.
 	 * @var int
 	 */
-	protected $_preferredPlaceholder = DBALite::PARAM_POSITIONAL;
+	protected $_nativePlaceholder = DBALite::PARAM_POSITIONAL;
 
 	/**
 	 * Special options availible to this driver
@@ -90,7 +98,7 @@ class DBALite_Driver_Pqsql extends DBALite_DriverAbstract
 	protected $_availibleOptions = array();
 
 	/**
-	 * Creates connection to database
+	 * Creates connection to database.
 	 *
 	 * Configuration array must contain a 'dbname', 'username' and 'password'.
 	 * Optional connection settings 'host and 'port' may be passed and will be
@@ -114,10 +122,10 @@ class DBALite_Driver_Pqsql extends DBALite_DriverAbstract
 		$dsn .= "password={$config['password']}";
 		
 		try {
-			if (empty($this->_driver_options)) {
+			if (empty($this->_driverOptions)) {
 				$conn = new PDO($dsn);
 			} else {
-				$conn = new PDO($dsn, '', '', $this->_driver_options);
+				$conn = new PDO($dsn, '', '', $this->_driverOptions);
 			}
 		} catch (PDOException $e) {
 			throw new DBALite_Exception("Connection to PostgreSQL database failed.", $e);
@@ -127,11 +135,11 @@ class DBALite_Driver_Pqsql extends DBALite_DriverAbstract
 	}
 
 	/**
-	 * Adds the SQL needed to do a limit query
+	 * Adds the SQL needed to do a limit query.
 	 *
-	 * @param string $sql SQL statement
-	 * @param integer $limit Number of rows to return
-	 * @param integer $offset Offset number of rows
+	 * @param string $sql SQL statement.
+	 * @param integer $limit Number of rows to return.
+	 * @param integer $offset Offset number of rows.
 	 * @return string
 	 */
 	public function limit($sql, $limit, $offset = 0)
@@ -144,9 +152,9 @@ class DBALite_Driver_Pqsql extends DBALite_DriverAbstract
 	}
 
 	/**
-	 * Get the ID in the autoincrementing column for the last inserted row
+	 * Get the ID in the autoincrementing column for the last inserted row.
 	 *
-	 * @param string $seq Name of the sequence column for the table
+	 * @param string $seq Name of the sequence column for the table.
 	 */
 	public function lastInsertId($seq = '')
 	{
@@ -158,7 +166,7 @@ class DBALite_Driver_Pqsql extends DBALite_DriverAbstract
 			$seq = $seq . '_seq';
 		}
 
-		$this->_pdo->lastInsertId($seq);
+		return $this->_pdo->lastInsertId($seq);
 	}
 }
-# vim:ff=unix:ts=4:sw=4:fdm=marker:
+# vim:ff=unix:ts=4:sw=4:

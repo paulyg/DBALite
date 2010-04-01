@@ -166,26 +166,6 @@ class DBALite_Select
 	}
 
 	/**
-	 * Add columns to the query.
-	 *
-	 * This method is provided for 'syntatic sugar'. It works the same as
-	 * from(). It is provided because calling from() multiple times while
-	 * builing a query may make it appear like you are attempting to add
-	 * additional tables when you are in fact just adding columns.
-	 *
-	 * @param string|array $table The table name to select from,
-	 *                            may be as array('alias' => 'table')
-	 * @param string|array $cols  Column(s) to include in the query, defaults to '*'. 
-	 * @return DBALite_Select     This object.
-	 */
-	public function columns($table, $columns = '*')
-	{
-		$this->join(null, $table, null, $columns);
-
-		return $this;
-	}
-
-	/**
 	 * Join a table to the query.
 	 *
 	 * @param string       $type      A join type.
@@ -225,7 +205,23 @@ class DBALite_Select
 
 		if (!isset($this->_from[$correlation])) {
 			
-			$condition = $this->_adapter->where($condition);
+			if (is_array($condition)) {
+				if ($condition[0] == 'USING') {
+					array_shift($condition);
+					$conditionCols = '';
+					foreach ($condition as $col) {
+						$conditionCols .= $this->_adapter->quoteIdentifier($col);
+					}
+					$condition = 'USING (' . explode(', ', $conditionCols) . ')';
+				} elseif (count($condition) == 2) {
+					$condition = 'ON ' . $this->_adapter->quoteIdentifier($condition[0])
+						. ' = ' . $this->_adapter->quoteIdentifier($condition[1]);
+				} else {
+					throw new DBALite_Exception("The array format for \$condition did not match any of the valid formats.");
+				}
+			} else {
+				$condition = 'ON ' . $condition;
+			}
 
 			$this->_from[$correlation] = array(
 				'tableName' => $this->_adapter->quoteIdentifier($tableName),
@@ -237,6 +233,12 @@ class DBALite_Select
 
 		if (is_string($columns)) {
 			$columns = array($columns);
+		} elseif (is_null($columns)) {
+			$columns = array();
+		}
+
+		if (is_null($alias)) {
+			$correlation = $this->_adapter->quoteIdentifier($correlation);
 		}
 
 		foreach ($columns as $column) {
@@ -485,8 +487,9 @@ class DBALite_Select
 				$table .= ' AS ' . $tabledata['alias'];
 			}
 			if (!is_null($tabledata['joinType'])) {
-				$joins[] = strtoupper($tabledata['joinType']) . ' JOIN '
-				         . $table . ' ON ' . $tabledata['joinCondition'];
+				$join = strtoupper($tabledata['joinType']) . ' JOIN ' . $table . ' ';
+				$join .= (!is_null($tabledata['joinCondition'])) ? $tabledata['joinCondition'] : '';
+				$joins[] = $join;
 			} else {
 				$from[] = $table;
 			}
