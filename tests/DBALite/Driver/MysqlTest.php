@@ -27,15 +27,62 @@
  */
 class DBALite_Driver_MysqlTest extends DBALite_Driver_CommonTests
 {
-	public function test_connect()
+	public static function setUpBeforeClass()
 	{
+		$config = array(
+			'dbname' => 'DBALite_Test',
+			'username' => 'dbalite',
+			'password' => 'testme'
+		);
+		self::$dbaliteConn = DBALite::factory('mysql', $config);
+	}
+
+	public function getConnection()
+	{
+		if (!isset($this->pdoConn)) {
+			$pdoObj = new PDO('mysql:host=localhost;dbname=DBALite_Test', 'dbalite', 'testme');
+			$this->pdoConn = $this->createDefaultDBConnection($pdoObj, 'mysql');
+		}
+		
+		return $this->pdoConn;
+	}
+
+	public function testQuoteString()
+	{
+		$expected = "'testme'";
+		$dbh = self::$dbaliteConn;
+		$this->assertEquals($expected, $dbh->quote('testme'));
+	}
+
+	public function testQuoteIdentifier()
+	{
+		$expected = '`firstname`';
+		$dbh = self::$dbaliteConn;
+		$this->assertEquals($expected, $dbh->quoteIdentifier('firstname'));
 	}
 
 	public function testLimit()
 	{
+		$dbh = self::$dbaliteConn;
+		$expected = "SELECT * FROM Products\nLIMIT 10 OFFSET 5";
+		$sql = 'SELECT * FROM Products';
+		$sql = $dbh->limit($sql, 10, 5);
+		$this->assertEquals($expected, $sql);
 	}
 
 	public function testLastInsertId()
 	{
+		$dbh = self::$dbaliteConn;
+
+		$dbh->execute('TRUNCATE TABLE Cars');
+		$data = array(
+			'make' => 'Honda',
+			'model' => 'Prelude',
+			'trim' => 'Type SH',
+			'numcyls' => 4,
+			'enginesize' => 2.2
+		);
+		$dbh->insert('Cars', $data);
+		$this->assertEquals(1, $dbh->lastInsertId());
 	}
 }

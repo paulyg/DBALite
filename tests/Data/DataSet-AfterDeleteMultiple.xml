@@ -7,6 +7,8 @@
 		<column>CategoryID</column>
 		<column>QuantityPerUnit</column>
 		<column>UnitPrice</column>
+		<column>UnitsInStock</column>
+		<column>ReorderLevel</column>
 		<row>
 			<value>1</value>
 			<value>Chai</value>
@@ -14,6 +16,8 @@
 			<value>1</value>
 			<value>10 boxes x 20 bags</value>
 			<value>18.0</value>
+			<value>39</value>
+			<value>10</value>
 		</row>
 		<row>
 			<value>2</value>
@@ -22,6 +26,8 @@
 			<value>2</value>
 			<value>48 - 6 oz jars</value>
 			<value>22.0</value>
+			<value>53</value>
+			<value>0</value>
 		</row>
 		<row>
 			<value>3</value>
@@ -30,6 +36,8 @@
 			<value>2</value>
 			<value>12 - 12 oz jars</value>
 			<value>40.0</value>
+			<value>6</value>
+			<value>0</value>
 		</row>
 		<row>
 			<value>4</value>
@@ -38,6 +46,8 @@
 			<value>7</value>
 			<value>25 - 825 g cans</value>
 			<value>45.6</value>
+			<value>26</value>
+			<value>0</value>
 		</row>
 	</table>
 </dataset>

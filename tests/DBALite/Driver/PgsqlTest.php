@@ -27,15 +27,62 @@
  */
 class DBALite_Driver_PgsqlTest extends DBALite_Driver_CommonTests
 {
-	public function test_connect()
+	public static function setUpBeforeClass()
 	{
+		$config = array(
+			'dbname' => 'DBALite_Test',
+			'username' => 'dbalite',
+			'password' => 'testme'
+		);
+		self::$dbaliteConn = DBALite::factory('pgsql', $config);
+	}
+
+	public function getConnection()
+	{
+		if (!isset($this->pdoConn)) {
+			$pdoObj = new PDO('pgsql:host=localhost dbname=DBALite_Test', 'dbalite', 'testme');
+			$this->pdoConn = $this->createDefaultDBConnection($pdoObj, 'pgsql');
+		}
+
+		return $this->pdoConn;
+	}
+
+	public function testQuoteString()
+	{
+		$expected = "'snakes on a plane'";
+		$dbh = self::$dbaliteConn;
+		$this->assertEquals($expected, $dbh->quote('snakes on a plane'));
+	}
+
+	public function testQuoteIdentifier()
+	{
+		$expected = '"firstname"';
+		$dbh = self::$dbaliteConn;
+		$this->assertEquals($expected, $dbh->quoteIdentifier('firstname'));
 	}
 
 	public function testLimit()
 	{
+		$dbh = self::$dbaliteConn;
+		$expected = "SELECT * FROM Products\nLIMIT 10 OFFSET 5";
+		$sql = 'SELECT * FROM Products';
+		$sql = $dbh->limit($sql, 10, 5);
+		$this->assertEquals($expected, $sql);
 	}
 
 	public function testLastInsertId()
 	{
+		$dbh = self::$dbaliteConn;
+
+		$dbh->execute('TRUNCATE TABLE Cars');
+		$data = array(
+			'make' => 'Honda',
+			'model' => 'Prelude',
+			'trim' => 'Type SH',
+			'numcyls' => 4,
+			'enginesize' => 2.2
+		);
+		$dbh->insert('Cars', $data);
+		$this->assertEquals(1, $dbh->lastInsertId('Cars_id'));
 	}
 }

@@ -59,6 +59,8 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 			'CategoryID' => 3,
 			'QuantityPerUnit' => '10 boxes x 12 pcs',
 			'UnitPrice' => 9.25
+			'UnitsInStock' => 25,
+			'ReorderLevel' => 5
 		);
 		$dbh->insert('Products', $data);
 		$this->assertDataSetsEqual(
@@ -73,7 +75,7 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 	public function testInsertBadArray()
 	{
 		$dbh = self::$dbaliteConn;
-		$data = array('ProductID' => 7, 'ProductName' => 'Chocolate Biscuits', 8, 3, '1 box', 100.55);
+		$data = array('ProductID' => 7, 'ProductName' => 'Chocolate Biscuits', 8, 3, '1 box', 100.55, 'UnitsInStock' => 77, 20);
 		$dbh->insert('Products', $data);
 	}
 
@@ -87,15 +89,17 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 			'SupplierID',
 			'CategoryId',
 			'QuantityPerUnit',
-			'UnitPrice'
+			'UnitPrice',
+			'UnitsInStock',
+			'ReorderLevel'
 		);
 		$stmt = $dbh->prepareInsert('Products', $cols);
 		$this->assertType('DBALite_Statement', $stmt);
 
-		$data1 = array(7, 'Ipoh Coffee', 20, 1, '16 - 500 g tins', 46.0);
+		$data1 = array(7, 'Ipoh Coffee', 20, 1, '16 - 500 g tins', 46.0, 17, 25);
 		$stmt->execute($data1);
 
-		$data2 = array(8, 'Filo Mix', 24, 5, '16 - 2 kg boxes', 7.99);
+		$data2 = array(8, 'Filo Mix', 24, 5, '16 - 2 kg boxes', 7.99, 38, 25);
 		$stmt->execute($data2);
 
 		$this->assertDataSetsEqual(
@@ -118,7 +122,9 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 			'SupplierID' => 24,
 			'CategoryId' => 5,
 			'QuantityPerUnit' => '16 - 2 kg boxes',
-			'UnitPrice' => 7.99
+			'UnitPrice' => 7.99,
+			'UnitsInStock' => 38,
+			'ReorderLevel' => 25
 		);
 		$stmt->execute($bad_data);
 	}
@@ -141,7 +147,7 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 	public function testUpdateBadArray()
 	{
 		$dbh = self::$dbaliteConn;
-		$data = array('ProductName' => 'Chocolate Biscuits', 8, 'CategoryID' => 3, '1 box', 100.55);
+		$data = array('ProductName' => 'Chocolate Biscuits', 8, 'CategoryID' => 3, '1 box', 100.55, 'UnitsInStock' => 77, 20);
 		$dbh->update('Products', $data, 'ProductID = 7');
 	}
 
@@ -224,7 +230,9 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 				'SupplierID' => 1,
 				'CategoryID' => 1,
 				'QuantityPerUnit' => '10 boxes x 20 bags',
-				'UnitPrice' => 18.0
+				'UnitPrice' => 18.0,
+				'UnitsInStock' => 39,
+				'ReorderLevel' => 10
 			),
 			array(
 				'ProductID' => 5,
@@ -232,7 +240,9 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 				'SupplierID' => 18,
 				'CategoryID' => 1,
 				'QuantityPerUnit' => '12 - 75 cl bottles',
-				'UnitPrice' => 263.5
+				'UnitPrice' => 263.5,
+				'UnitsInStock' => 17,
+				'ReorderLevel' => 15
 			),
 		);
 
@@ -258,7 +268,7 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 		$dbh = self::$dbaliteConn;
 		$sql = 'INSERT INTO Products (ProductID, ProductName, SupplierID, CategoryID, '
 			. 'QuantityPerUnit, UnitPrice) VALUES (7, \'Tiramisu\', 11, 3, '
-			. '\'1 - 0.5 lb box\', 6.99)';
+			. '\'1 - 0.5 lb box\', 6.99, 11, 5)';
 		$dbh->execute($sql);
 
 		$this->assertDataSetsEqual(
