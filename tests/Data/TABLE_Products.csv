@@ -3,7 +3,7 @@ ProductID,ProductName,SupplierID,CategoryID,QuantityPerUnit,UnitPrice,UnitsInSto
 2,Chang,1,1,"24 - 12 oz bottles",19.0,17,25
 3,"Aniseed Syrup",1,2,"12 - 550 ml bottles",10.0,13,25
 4,"Chef Anton's Cajun Seasoning",2,2,"48 - 6 oz jars",22.0,53,0
-5,"Chef Anton's Gumbo Mix",2,2,"36 boxes",21.35,0,0,0,1
+5,"Chef Anton's Gumbo Mix",2,2,"36 boxes",21.35,0,0
 6,"Grandma's Boysenberry Spread",3,2,"12 - 8 oz jars",25.0,120,25
 7,"Uncle Bob's Organic Dried Pears",3,7,"12 - 1 lb pkgs.",30.0,15,10
 8,"Northwoods Cranberry Sauce",3,2,"12 - 12 oz jars",40.0,6,0

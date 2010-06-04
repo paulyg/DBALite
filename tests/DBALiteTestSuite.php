@@ -42,10 +42,17 @@
  *
  * MySQL test database setup:
  * 1) Log into the MySQL shell client with root access: 'mysql -u root -p'.
- * 2) 'CREATE DATABASE DBALite_Test;'
- * 3) 'CREATE USER 'dbalite'@'localhost' IDENTIFIED BY 'testme';
- * 4) 'GRANT ALL ON DBALite_Test.* TO 'dbalite'@'localhost';
+ * 2) "CREATE DATABASE DBALite_Test;"
+ * 3) "CREATE USER 'dbalite'@'localhost' IDENTIFIED BY 'testme';"
+ * 4) "GRANT ALL ON DBALite_Test.* TO 'dbalite'@'localhost';"
  * 5) Run the CREATE TABLE statements located in 'tests/Data/Mysql_Test_Db_Schema.sql'.
+ *
+ * PostgreSQL test database setup:
+ * 1) Start the PostgreSQL command line client with superuser privlege: 'sudo -u postgres psql'.
+ * 2) "CREATE DATABASE DBALiteTest;"
+ * 3) "CREATE USER dbalite WITH PASSWORD 'testme'"
+ * 4) 'GRANT ALL ON DATABASE "DBALiteTest" TO "dbalite";'
+ * 5) Run the CREATE TABLE statements located in 'tests/Data/PostgreSql_Test_Db_Schema.sql'.
  *
  * The singleton functionality in class DBALite is not tested because it
  * prevents further tests from being run. To test this functionality run
@@ -87,9 +94,13 @@ class DBALiteTestSuite
 		if (extension_loaded('pdo_pgsql')) {
 			require_once('DBALite/Driver/PgsqlTest.php');
 			require_once('DBALite/Statement/PgsqlTest.php');
-			$suite->addTestSuite('DBALite_Driver_PgsqlTest');
-			$suite->addTestSuite('DBALite_Statement_PgsqlTest');
-			echo 'Postgre tests to be executed.' . PHP_EOL;
+			try {
+				$con = new PDO('pgsql:host=localhost dbname=DBALiteTest', 'dbalite', 'testme');
+				$suite->addTestSuite('DBALite_Driver_PgsqlTest');
+				$suite->addTestSuite('DBALite_Statement_PgsqlTest');
+				echo 'Postgre tests to be executed.' . PHP_EOL;
+			} catch (PDOException $e) {
+			}
 		}
 
 		if (extension_loaded('pdo_odbc')) {

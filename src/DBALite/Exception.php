@@ -125,6 +125,10 @@ class DBALite_Exception extends Exception
 			$msg .= 'In file: ' . $this->getFile() . ', line: ' . $this->getLine() . PHP_EOL;
 		}
 
+		if (isset($this->sql)) {
+			$msg .= 'SQL: ' . $this->sql . PHP_EOL;
+		}
+
 		return $msg;
 	}
 

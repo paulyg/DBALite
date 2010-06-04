@@ -58,7 +58,7 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 			'SupplierID' => 8,
 			'CategoryID' => 3,
 			'QuantityPerUnit' => '10 boxes x 12 pcs',
-			'UnitPrice' => 9.25
+			'UnitPrice' => 9.25,
 			'UnitsInStock' => 25,
 			'ReorderLevel' => 5
 		);
@@ -134,7 +134,7 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 		$expected_file = DATA_DIR . 'DataSet-AfterUpdate.xml';
 		$dbh = self::$dbaliteConn;
 		$data = array('UnitPrice' => 43.75);
-		$dbh->update('Products', $data, 'ProductID = 3');
+		$dbh->update('Products', $data, array('ProductID', '=', 3));
 		$this->assertDataSetsEqual(
 			$this->createXMLDataSet($expected_file),
 			$this->getConnection()->createDataSet(array('Products'))
@@ -159,7 +159,7 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 			'QuantityPerUnit',
 			'UnitPrice'
 		);
-		$stmt = $dbh->prepareUpdate('Products', $cols, 'ProductID = ?');
+		$stmt = $dbh->prepareUpdate('Products', $cols, array('ProductID', '=', '?'));
 		$this->assertType('DBALite_Statement', $stmt);
 
 		$data1 = array('48 - 5.5 oz jars', 23.5, 2);
@@ -194,7 +194,7 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 	{
 		$expected_file = DATA_DIR . 'DataSet-AfterDelete.xml';
 		$dbh = self::$dbaliteConn;
-		$dbh->delete('Products', 'ProductID = 6');
+		$dbh->delete('Products', array('ProductID', '=', 6));
 		$this->assertDataSetsEqual(
 			$this->createXMLDataSet($expected_file),
 			$this->getConnection()->createDataSet(array('Products'))
@@ -205,7 +205,7 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 	{
 		$expected_file = DATA_DIR . 'DataSet-AfterDeleteMultiple.xml';
 		$dbh = self::$dbaliteConn;
-		$stmt = $dbh->prepareDelete('Products', 'ProductID = ?');
+		$stmt = $dbh->prepareDelete('Products', array('ProductID', '=', '?'));
 		$this->assertType('DBALite_Statement', $stmt);
 
 		$stmt->execute(5);
@@ -247,7 +247,8 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 		);
 
 		$dbh = self::$dbaliteConn;
-		$sql = 'SELECT * FROM Products WHERE CategoryID = 1';
+		$sql = 'SELECT * FROM ' . $dbh->quoteIdentifier('Products')
+			. ' WHERE ' . $dbh->quoteIdentifier('CategoryID') . ' = 1';
 		$result = $dbh->queryAll($sql);
 
 		$this->assertEquals($expected, $result);
@@ -256,25 +257,10 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 	public function testQueryOne()
 	{
 		$dbh = self::$dbaliteConn;
-		$sql = 'SELECT COUNT(*) FROM Products';
+		$sql = 'SELECT COUNT(*) FROM ' . $dbh->quoteIdentifier('Products');
 		$result = $dbh->queryOne($sql);
 
 		$this->assertEquals('6', $result);
-	}
-
-	public function testExecute()
-	{
-		$expected_file = DATA_DIR . 'DataSet-AfterExecute.xml';
-		$dbh = self::$dbaliteConn;
-		$sql = 'INSERT INTO Products (ProductID, ProductName, SupplierID, CategoryID, '
-			. 'QuantityPerUnit, UnitPrice) VALUES (7, \'Tiramisu\', 11, 3, '
-			. '\'1 - 0.5 lb box\', 6.99, 11, 5)';
-		$dbh->execute($sql);
-
-		$this->assertDataSetsEqual(
-			$this->createXMLDataSet($expected_file),
-			$this->getConnection()->createDataSet(array('Products'))
-		);
 	}
 
 	public function testQuoteInt()

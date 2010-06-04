@@ -177,7 +177,7 @@ class DBALite_Select
 	 *                                defaults to '*'.
 	 * @return DBALite_Select         This object.
 	 */
-	public function join($type, $table, $condition, $columns = '*')
+	public function join($type, $table, $condition = '', $columns = '*')
 	{
 		if (!is_null($type) && !in_array(strtoupper($type), self::$_joinTypes)) {
 			throw new DBALite_Exception("Invalid join type '$type'.");
@@ -203,25 +203,8 @@ class DBALite_Select
 
 		$correlation = (is_null($alias)) ? $tableName : $alias;
 
-		if (!isset($this->_from[$correlation])) {
-			
-			if (is_array($condition)) {
-				if ($condition[0] == 'USING') {
-					array_shift($condition);
-					$conditionCols = '';
-					foreach ($condition as $col) {
-						$conditionCols .= $this->_adapter->quoteIdentifier($col);
-					}
-					$condition = 'USING (' . explode(', ', $conditionCols) . ')';
-				} elseif (count($condition) == 2) {
-					$condition = 'ON ' . $this->_adapter->quoteIdentifier($condition[0])
-						. ' = ' . $this->_adapter->quoteIdentifier($condition[1]);
-				} else {
-					throw new DBALite_Exception("The array format for \$condition did not match any of the valid formats.");
-				}
-			} else {
-				$condition = 'ON ' . $condition;
-			}
+		if (!isset($this->_from[$correlation]) && !empty($condition)) {
+			$condition = $this->_parseJoinCondition($condition);
 
 			$this->_from[$correlation] = array(
 				'tableName' => $this->_adapter->quoteIdentifier($tableName),
@@ -242,7 +225,7 @@ class DBALite_Select
 		}
 
 		foreach ($columns as $column) {
-			$this->_column($column, $correlation);
+			$this->_addColumn($column, $correlation);
 		}
 
 		return $this;
@@ -488,35 +471,36 @@ class DBALite_Select
 			}
 			if (!is_null($tabledata['joinType'])) {
 				$join = strtoupper($tabledata['joinType']) . ' JOIN ' . $table . ' ';
-				$join .= (!is_null($tabledata['joinCondition'])) ? $tabledata['joinCondition'] : '';
+				$join .= $tabledata['joinCondition'];
+			//	$join .= (!empty($tabledata['joinCondition'])) ? $tabledata['joinCondition'] : '';
 				$joins[] = $join;
 			} else {
 				$from[] = $table;
 			}
 		}
-		$sql .= PHP_EOL . 'FROM ' . implode(', ', $from);
+		$sql .= ' FROM ' . implode(', ', $from);
 		if (count($joins)) {
-			$sql .= PHP_EOL . implode(PHP_EOL, $joins);
+			$sql .= ' ' . implode(' ', $joins);
 		}
 
 		// Add WHERE clauses
 		if (count($this->_where)) {
-			$sql .= PHP_EOL . 'WHERE ' . implode(' ', $this->_where);
+			$sql .= ' WHERE ' . implode(' ', $this->_where);
 		}
 
 		// Add GROUP BYs
 		if (count($this->_group)) {
-			$sql .= PHP_EOL . 'GROUP BY ' . implode(', ', $this->_group);
+			$sql .= ' GROUP BY ' . implode(', ', $this->_group);
 		}
 
 		// Add HAVING
 		if (count($this->_having)) {
-			$sql .= PHP_EOL . 'HAVING ' . implode(' ', $this->_having);
+			$sql .= ' HAVING ' . implode(' ', $this->_having);
 		}
 
 		// Add ORDER BY
 		if (count($this->_order)) {
-			$sql .= PHP_EOL . 'ORDER BY ' . implode(', ', $this->_order);
+			$sql .= ' ORDER BY ' . implode(', ', $this->_order);
 		}
 
 		// Add LIMIT
@@ -563,7 +547,7 @@ class DBALite_Select
 	 * @param string       $correlation Table name or table alias.
 	 * @return void
 	 */
-	protected function _column($column, $correlation)
+	protected function _addColumn($column, $correlation)
 	{
 		if (is_array($column) && count($column) == 1) {
 			$alias = key($column);
@@ -592,6 +576,35 @@ class DBALite_Select
 			'columnName' => $columnName,
 			'correlation' => $correlation
 		);
+	}
+
+	/**
+	 * Internal function for building join conditions.
+	 *
+	 * @param mixed $condition
+	 * @return string
+	 */
+	protected function _parseJoinCondition($condition)
+	{
+		if (is_array($condition)) {
+			if ($condition[0] == 'USING') {
+				array_shift($condition);
+				$conditionCols = '';
+				foreach ($condition as $col) {
+					$conditionCols .= $this->_adapter->quoteIdentifier($col);
+				}
+				$condition = 'USING (' . explode(', ', $conditionCols) . ')';
+			} elseif (count($condition) == 2) {
+				$condition = 'ON ' . $this->_adapter->quoteIdentifier($condition[0])
+					. ' = ' . $this->_adapter->quoteIdentifier($condition[1]);
+			} else {
+				throw new DBALite_Exception("The array format for \$condition did not match any of the valid formats.");
+			}
+		} else {
+			$condition = 'ON ' . $condition;
+		}
+
+		return $condition;
 	}
 }
 # vim:ff=unix:ts=4:sw=4:

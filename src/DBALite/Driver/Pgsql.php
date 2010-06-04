@@ -63,7 +63,7 @@
  * @package DBALite
  * @subpackage Drivers
  */
-class DBALite_Driver_Pqsql extends DBALite_DriverAbstract
+class DBALite_Driver_Pgsql extends DBALite_DriverAbstract
 {
 	/**
 	 * Name of driver (aka brand) of database in use.

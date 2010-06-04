@@ -22,6 +22,8 @@
  * along with DBALite. If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'PHPUnit/Extensions/Database/DataSet/CsvDataSet.php';
+
 /**
  * @package DBALiteTest
  */

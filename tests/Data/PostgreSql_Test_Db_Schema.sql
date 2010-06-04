@@ -1,12 +1,12 @@
 CREATE TABLE "Products" (
-ProductID INTEGER PRIMARY KEY,
-ProductName VARCHAR(40) NOT NULL,
-SupplierID INTEGER,
-CategoryID INTEGER,
-QuantityPerUnit VARCHAR(20),
-UnitPrice NUMERIC(6,2),
-UnitsInStock INTEGER,
-ReorderLevel INTEGER,
+"ProductID" INTEGER PRIMARY KEY,
+"ProductName" VARCHAR(40) NOT NULL,
+"SupplierID" INTEGER,
+"CategoryID" INTEGER,
+"QuantityPerUnit" VARCHAR(20),
+"UnitPrice" NUMERIC(6,2),
+"UnitsInStock" INTEGER,
+"ReorderLevel" INTEGER,
 );
 
 CREATE TABLE "Cars" (

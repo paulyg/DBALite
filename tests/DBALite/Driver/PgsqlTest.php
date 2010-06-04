@@ -30,7 +30,7 @@ class DBALite_Driver_PgsqlTest extends DBALite_Driver_CommonTests
 	public static function setUpBeforeClass()
 	{
 		$config = array(
-			'dbname' => 'DBALite_Test',
+			'dbname' => 'DBALiteTest',
 			'username' => 'dbalite',
 			'password' => 'testme'
 		);
@@ -40,11 +40,26 @@ class DBALite_Driver_PgsqlTest extends DBALite_Driver_CommonTests
 	public function getConnection()
 	{
 		if (!isset($this->pdoConn)) {
-			$pdoObj = new PDO('pgsql:host=localhost dbname=DBALite_Test', 'dbalite', 'testme');
-			$this->pdoConn = $this->createDefaultDBConnection($pdoObj, 'pgsql');
+			$pdoObj = new PDO('pgsql:host=localhost dbname=DBALiteTest', 'dbalite', 'testme');
+			$this->pdoConn = $this->createDefaultDBConnection($pdoObj);
 		}
 
 		return $this->pdoConn;
+	}
+
+	public function testExecute()
+	{
+		$expected_file = DATA_DIR . 'DataSet-AfterExecute.xml';
+		$dbh = self::$dbaliteConn;
+		$sql = 'INSERT INTO "Products" ("ProductID", "ProductName", "SupplierID", "CategoryID", '
+			. '"QuantityPerUnit", "UnitPrice", "UnitsInStock", "ReorderLevel") VALUES (7, '
+			. '\'Tiramisu\', 11, 3, \'1 - 0.5 lb box\', 6.99, 11, 5)';
+		$dbh->execute($sql);
+
+		$this->assertDataSetsEqual(
+			$this->createXMLDataSet($expected_file),
+			$this->getConnection()->createDataSet(array('Products'))
+		);
 	}
 
 	public function testQuoteString()
@@ -64,7 +79,7 @@ class DBALite_Driver_PgsqlTest extends DBALite_Driver_CommonTests
 	public function testLimit()
 	{
 		$dbh = self::$dbaliteConn;
-		$expected = "SELECT * FROM Products\nLIMIT 10 OFFSET 5";
+		$expected = "SELECT * FROM Products LIMIT 10 OFFSET 5";
 		$sql = 'SELECT * FROM Products';
 		$sql = $dbh->limit($sql, 10, 5);
 		$this->assertEquals($expected, $sql);
@@ -74,7 +89,7 @@ class DBALite_Driver_PgsqlTest extends DBALite_Driver_CommonTests
 	{
 		$dbh = self::$dbaliteConn;
 
-		$dbh->execute('TRUNCATE TABLE Cars');
+		$dbh->execute('TRUNCATE TABLE "Cars"');
 		$data = array(
 			'make' => 'Honda',
 			'model' => 'Prelude',

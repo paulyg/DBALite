@@ -31,27 +31,48 @@ class DBALite_Statement_PgsqlTest extends DBALite_Statement_CommonTests
 	public static function setUpBeforeClass()
 	{
 		$config = array(
-			'dbname' => 'DBALite_Test',
+			'dbname' => 'DBALiteTest',
 			'username' => 'dbalite',
 			'password' => 'testme'
 		);
 		$csvfile = DATA_DIR . 'TABLE_Products.csv';
 		$pdoObj = new PDO("pgsql:dbname={$config['dbname']}", $config['username'], $config['password']);
-		self::$phpunitConn = new PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection($pdoObj, 'pgsql');
+		self::$phpunitConn = new PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection($pdoObj);
 		self::$dataset = new PHPUnit_Extensions_Database_Dataset_CsvDataSet();
 		self::$dataset->addTable('Products', $csvfile);
-		$setupOperation = PHPUnit_Extensions_Database_Operations_Factory::CLEAN_INSERT();
+		$setupOperation = PHPUnit_Extensions_Database_Operation_Factory::CLEAN_INSERT();
 		$setupOperation->execute(self::$phpunitConn, self::$dataset);
 
 		$driver = DBALite::factory('pgsql', $config);
-		$sql = 'SELECT * FROM Products WHERE CategoryID = ?';
+		$sql = 'SELECT * FROM "Products" WHERE "CategoryID" = ?';
 		self::$dbaliteStmt = $driver->prepare($sql);
 		self::$dbaliteDriver = $driver;
 	}
 
 	public static function tearDownAfterClass()
 	{
-		$teardownOperation = PHPUnit_Extensions_Database_Operations_Factory::TRUNCATE();
+		$teardownOperation = PHPUnit_Extensions_Database_Operation_Factory::TRUNCATE();
 		$teardownOperation->execute(self::$phpunitConn, self::$dataset);
+	}
+
+	public function testGetSqlDefault()
+	{
+		$stmt = self::$dbaliteStmt;
+		$expected = 'SELECT * FROM "Products" WHERE "CategoryID" = ?';
+		$this->assertEquals($expected, $stmt->getSql());
+	}
+
+	public function testGetSqlPdo()
+	{
+		$stmt = self::$dbaliteStmt;
+		$expected = 'SELECT * FROM "Products" WHERE "CategoryID" = ?';
+		$this->assertEquals($expected, $stmt->getSql('pdo'));
+	}
+
+	public function testGetSqlDbalite()
+	{
+		$stmt = self::$dbaliteStmt;
+		$expected = 'SELECT * FROM "Products" WHERE "CategoryID" = ?';
+		$this->assertEquals($expected, $stmt->getSql('dbalite'));
 	}
 }

@@ -38,10 +38,25 @@ class DBALite_Driver_SqliteTest extends DBALite_Driver_CommonTests
 		if (!isset($this->pdoConn)) {
 			$file = DATA_DIR . 'SqliteTest.sqlite';
 			$pdoObj = new PDO("sqlite:$file");
-			$this->pdoConn = $this->createDefaultDBConnection($pdoObj, 'sqlite');
+			$this->pdoConn = $this->createDefaultDBConnection($pdoObj);
 		}
 
 		return $this->pdoConn;
+	}
+
+	public function testExecute()
+	{
+		$expected_file = DATA_DIR . 'DataSet-AfterExecute.xml';
+		$dbh = self::$dbaliteConn;
+		$sql = 'INSERT INTO Products (ProductID, ProductName, SupplierID, CategoryID, '
+			. 'QuantityPerUnit, UnitPrice, UnitsInStock, ReorderLevel) VALUES (7, '
+			. '\'Tiramisu\', 11, 3, \'1 - 0.5 lb box\', 6.99, 11, 5)';
+		$dbh->execute($sql);
+
+		$this->assertDataSetsEqual(
+			$this->createXMLDataSet($expected_file),
+			$this->getConnection()->createDataSet(array('Products'))
+		);
 	}
 
 	public function testQuoteString()
@@ -61,7 +76,7 @@ class DBALite_Driver_SqliteTest extends DBALite_Driver_CommonTests
 	public function testLimit()
 	{
 		$dbh = self::$dbaliteConn;
-		$expected = "SELECT * FROM Products\nLIMIT 10 OFFSET 5";
+		$expected = "SELECT * FROM Products LIMIT 10 OFFSET 5";
 		$sql = 'SELECT * FROM Products';
 		$sql = $dbh->limit($sql, 10, 5);
 		$this->assertEquals($expected, $sql);

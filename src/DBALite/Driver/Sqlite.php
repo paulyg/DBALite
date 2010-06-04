@@ -133,7 +133,7 @@ class DBALite_Driver_Sqlite extends DBALite_DriverAbstract
 	 */
 	public function limit($sql, $limit, $offset = 0)
 	{
-		$sql = $sql . "\nLIMIT $limit";
+		$sql = $sql . " LIMIT $limit";
 		if ($offset) {
 			$sql = $sql . " OFFSET $offset";
 		}

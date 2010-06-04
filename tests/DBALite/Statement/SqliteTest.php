@@ -33,10 +33,10 @@ class DBALite_Statement_SqliteTest extends DBALite_Statement_CommonTests
 		$dbfile = DATA_DIR . 'SqliteTest.sqlite';
 		$csvfile = DATA_DIR . 'TABLE_Products.csv';
 		$pdoObj = new PDO("sqlite:$dbfile");
-		self::$phpunitConn = new PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection($pdoObj, 'sqlite');
+		self::$phpunitConn = new PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection($pdoObj);
 		self::$dataset = new PHPUnit_Extensions_Database_Dataset_CsvDataSet();
 		self::$dataset->addTable('Products', $csvfile);
-		$setupOperation = PHPUnit_Extensions_Database_Operations_Factory::CLEAN_INSERT();
+		$setupOperation = PHPUnit_Extensions_Database_Operation_Factory::CLEAN_INSERT();
 		$setupOperation->execute(self::$phpunitConn, self::$dataset);
 
 		$driver = DBALite::factory('sqlite', array('dbname' => $dbfile));
@@ -47,7 +47,7 @@ class DBALite_Statement_SqliteTest extends DBALite_Statement_CommonTests
 
 	public static function tearDownAfterClass()
 	{
-		$teardownOperation = PHPUnit_Extensions_Database_Operations_Factory::TRUNCATE();
+		$teardownOperation = PHPUnit_Extensions_Database_Operation_Factory::TRUNCATE();
 		$teardownOperation->execute(self::$phpunitConn, self::$dataset);
 	}
 }

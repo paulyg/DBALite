@@ -241,7 +241,7 @@ class DBALite_Statement
 				return $this->_stmt->execute();
 			}
 		} catch (PDOException $e) {
-			throw new DBALite_Exception('Error on PDOStatement->execute()', $e);
+			throw new DBALite_Exception('Error running PDOStatement->execute().', $e, $this->_sql);
 		}
 	}
 

@@ -292,7 +292,7 @@ abstract class DBALite_DriverAbstract
 		$sql = 'INSERT INTO '
 			 . $this->quoteIdentifier($table)
 			 . '(' . implode(', ', $cols) . ')'
-			 . 'VALUES (' . implode(', ', $vals) . ')';
+			 . ' VALUES (' . implode(', ', $vals) . ')';
 
 		$stmt = $this->prepare($sql, DBALite::PARAM_POSITIONAL);
 
@@ -468,7 +468,7 @@ abstract class DBALite_DriverAbstract
 		try {
 			$pdo_stmt = $this->_pdo->prepare($sql);
 		} catch (PDOException $e) {
-			throw new DBALite_Exception('Error executing PDO->prepare()', $e);
+			throw new DBALite_Exception('Error executing PDO->prepare().', $e, $sql);
 		}
 		$dbalite_stmt = new DBALite_Statement($pdo_stmt, $sql, $this->_fetchMode, $placeholder);
 		return $dbalite_stmt;
@@ -492,7 +492,7 @@ abstract class DBALite_DriverAbstract
 			try {
 				$pdo_stmt = $this->_pdo->query($sql);
 			} catch (PDOException $e) {
-				throw new DBALite_Exception('Error executing PDO->query()', $e);
+				throw new DBALite_Exception('Error executing PDO->query().', $e, $sql);
 			}
 			$dbalite_stmt = new DBALite_Statement($pdo_stmt, $sql, $this->_fetchMode, $placeholder);
 		}
@@ -540,7 +540,7 @@ abstract class DBALite_DriverAbstract
 		try {
 			return $this->_pdo->exec($sql);
 		} catch (PDOException $e) {
-			throw new DBALite_Exception('Error running PDO->exec()', $e);
+			throw new DBALite_Exception('Error running PDO->exec().', $e, $sql);
 		}
 	}
 
