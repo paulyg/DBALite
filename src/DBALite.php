@@ -74,8 +74,8 @@ class DBALite
 	/**
 	 * Class constants
 	 */
-	const VERSION = '0.3.0dev';
-	const API_VERSION = 3000;
+	const VERSION = '0.3.1-beta';
+	const API_VERSION = 3010;
 	const ARRAY_MIXED = 0;
 	const ARRAY_INDEXED = 1;
 	const ARRAY_ASSOC = 2;

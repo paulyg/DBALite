@@ -188,6 +188,16 @@ abstract class DBALite_DriverAbstract
 	}
 
 	/**
+	 * Return the name of the driver in use.
+	 *
+	 * @return string
+	 */
+	public function getDriverName()
+	{
+		return $this->_driver;
+	}
+
+	/**
 	 * Set a DBALite option.
 	 *
 	 * @param string $key Option name.

@@ -151,7 +151,7 @@ class DBALite_SelectTest extends PHPUnit_Framework_TestCase
 		$sel = self::$select;
 		$expected = 'SELECT "Orders"."ShipCountry", "Shippers"."CompanyName" FROM "Orders" '
 		          . 'CROSS JOIN "Shippers"';
-		$sel->from('Orders', 'ShipCountry')->join('cross', 'Shippers', '', 'CompanyName');
+		$sel->from('Orders', 'ShipCountry')->join('cross', 'Shippers', null, 'CompanyName');
 		$sql = $sel->build();
 		$this->assertEquals($expected, $sql);
 	}
@@ -171,7 +171,7 @@ class DBALite_SelectTest extends PHPUnit_Framework_TestCase
 		$sel = self::$select;
 		$expected = 'SELECT e."FirstName", e."LastName", e."Title", t."TerritoryDescription" '
 				  . 'FROM "Employees" AS e '
-				  . 'INNER JOIN "EmployeeTerritories" AS et ON "Employees"."EmployeeID" = "EmployeeTerritories"."EmployeeID" '
+				  . 'INNER JOIN "EmployeeTerritories" AS et ON "Employees"."EmployeeID" = "EmployeeTerritories"."EmployeeID"' . PHP_EOL
 				  . 'INNER JOIN "Territories" AS t ON "EmployeeTerritories"."TerritoryID" = "Territories"."TerritoryID"';
 		$employee_cols = array('FirstName', 'LastName', 'Title');
 		$territory_cols = array('TerritoryDescription');

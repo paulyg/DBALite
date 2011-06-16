@@ -40,6 +40,9 @@
  * other databases you will need to setup a test database before you can run
  * tests on that driver. 
  *
+ * Run the test suite with the following command:
+ * 'phpunit --bootstrap TestHelper.php DBALiteTestSuite'
+ *
  * MySQL test database setup:
  * 1) Log into the MySQL shell client with root access: 'mysql -u root -p'.
  * 2) "CREATE DATABASE DBALite_Test;"

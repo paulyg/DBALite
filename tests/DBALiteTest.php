@@ -39,7 +39,7 @@ class DBALiteTest extends PHPUnit_Framework_TestCase
 		$driver = 'sqlite';
 		$config = array('dbname' => self::$dbname);
 		$instance = DBALite::factory($driver, $config);
-		$this->assertType('DBALite_Driver_Sqlite', $instance);
+		$this->assertInstanceOf('DBALite_Driver_Sqlite', $instance);
 	}
 
 	public function testFactoryDriverCase()
@@ -47,7 +47,7 @@ class DBALiteTest extends PHPUnit_Framework_TestCase
 		$driver = 'SQLite';
 		$config = array('dbname' => self::$dbname);
 		$instance = DBALite::factory($driver, $config);
-		$this->assertType('DBALite_Driver_Sqlite', $instance);
+		$this->assertInstanceOf('DBALite_Driver_Sqlite', $instance);
 	}
 
 	/**

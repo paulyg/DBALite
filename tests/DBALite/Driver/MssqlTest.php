@@ -27,19 +27,15 @@
  */
 class DBALite_Driver_MssqlTest extends DBALite_Driver_CommonTests
 {
-	public function test_connect()
-	{
-	}
+	public function testGetDriverName() { }
 
-	public function testQuoteIdentifier()
-	{
-	}
+	public function testExecute() { }
 
-	public function testLimit()
-	{
-	}
+	public function testQuoteString() { }
 
-	public function testLastInsertId()
-	{
-	}
+	public function testQuoteIdentifier() { }
+
+	public function testLimit() { }
+
+	public function testLastInsertId() { }
 }

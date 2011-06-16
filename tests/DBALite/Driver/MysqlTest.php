@@ -48,6 +48,12 @@ class DBALite_Driver_MysqlTest extends DBALite_Driver_CommonTests
 		return $this->pdoConn;
 	}
 
+	public function testGetDriverName()
+	{
+		$dbh = self::$dbaliteConn;
+		$this->assertEquals('mysql', $dbh->getDriverName());
+	}
+
 	public function testExecute()
 	{
 		$expected_file = DATA_DIR . 'DataSet-AfterExecute.xml';

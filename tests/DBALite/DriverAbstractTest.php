@@ -100,7 +100,7 @@ class DBALite_DriverAbstractTest extends PHPUnit_Framework_TestCase
 	{
 		$dbh = self::$database;
 		$sel = $dbh->select();
-		$this->assertType('DBALite_Select', $sel);
+		$this->assertInstanceOf('DBALite_Select', $sel);
 	}
 
 	public function testWhereString()

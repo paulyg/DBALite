@@ -94,7 +94,7 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 			'ReorderLevel'
 		);
 		$stmt = $dbh->prepareInsert('Products', $cols);
-		$this->assertType('DBALite_Statement', $stmt);
+		$this->assertInstanceOf('DBALite_Statement', $stmt);
 
 		$data1 = array(7, 'Ipoh Coffee', 20, 1, '16 - 500 g tins', 46.0, 17, 25);
 		$stmt->execute($data1);
@@ -160,7 +160,7 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 			'UnitPrice'
 		);
 		$stmt = $dbh->prepareUpdate('Products', $cols, array('ProductID', '=', '?'));
-		$this->assertType('DBALite_Statement', $stmt);
+		$this->assertInstanceOf('DBALite_Statement', $stmt);
 
 		$data1 = array('48 - 5.5 oz jars', 23.5, 2);
 		$stmt->execute($data1);
@@ -206,7 +206,7 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
 		$expected_file = DATA_DIR . 'DataSet-AfterDeleteMultiple.xml';
 		$dbh = self::$dbaliteConn;
 		$stmt = $dbh->prepareDelete('Products', array('ProductID', '=', '?'));
-		$this->assertType('DBALite_Statement', $stmt);
+		$this->assertInstanceOf('DBALite_Statement', $stmt);
 
 		$stmt->execute(5);
 		$stmt->execute(array(6));

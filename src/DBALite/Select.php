@@ -177,7 +177,7 @@ class DBALite_Select
 	 *                                defaults to '*'.
 	 * @return DBALite_Select         This object.
 	 */
-	public function join($type, $table, $condition = '', $columns = '*')
+	public function join($type, $table, $condition = null, $columns = '*')
 	{
 		if (!is_null($type) && !in_array(strtoupper($type), self::$_joinTypes)) {
 			throw new DBALite_Exception("Invalid join type '$type'.");
@@ -203,8 +203,11 @@ class DBALite_Select
 
 		$correlation = (is_null($alias)) ? $tableName : $alias;
 
-		if (!isset($this->_from[$correlation]) && !empty($condition)) {
-			$condition = $this->_parseJoinCondition($condition);
+		if (!isset($this->_from[$correlation])) {
+
+			if (!is_null($condition)) {
+				$condition = $this->_parseJoinCondition($condition);
+			}
 
 			$this->_from[$correlation] = array(
 				'tableName' => $this->_adapter->quoteIdentifier($tableName),
@@ -250,7 +253,7 @@ class DBALite_Select
 	 * @param string $andOr   OPTIONAL: Concatenate with 'AND' (default) or 'OR'.
 	 * @return DBALite_Select This object.
 	 */
-	public function where($col, $expr, $data, $andOr = 'AND')
+	public function where($col, $expr, $data = '', $andOr = 'AND')
 	{
 		$col = $this->_adapter->quoteIdentifier($col);
 
@@ -376,17 +379,13 @@ class DBALite_Select
 	}
 
 	/**
-	 * Add ordering information to the query.
-	 *
-	 * The argument may be a simple string, a string of columns separated by
-	 * commas, or an array. Each column must have a direction of 'ASC or 'DESC'
-	 * in the string.
+	 * Add an ordering clause to the query.
 	 *
 	 * @param string $cols    Column to order by.
-	 * @param string $dir     Direction: 'ASC' or 'DESC'.
+	 * @param string $dir     Optional direction: 'ASC' or 'DESC'.
 	 * @return DBALite_Select This object.
 	 */
-	public function orderBy($col, $dir)
+	public function orderBy($col, $dir = null)
 	{
 		if (is_string($col)) {
 			$col = $this->_adapter->quoteIdentifier($col);
@@ -394,12 +393,14 @@ class DBALite_Select
 			throw new DBALite_Exception("Invalid parameter for DBALite_Select::orderby(). 1st parameter must be a string and a valid column name.");
 		}
 		
-		$dir = strtoupper($dir);
-		if (($dir != 'ASC') && ($dir != 'DESC')) {
-			throw new DBALite_Exception("Invalid parameter for DBALite_Select::orderby(). 2nd parameter must be 'ASC' or 'DESC'.");
+		if (!is_null($dir)) {
+			$dir = strtoupper($dir);
+			if (($dir != 'ASC') && ($dir != 'DESC')) {
+				throw new DBALite_Exception("Invalid parameter for DBALite_Select::orderby(). 2nd parameter must be 'ASC' or 'DESC'.");
+			}
 		}
 
-		$this->_order[] = $col . ' ' . $dir;
+		$this->_order[] = $col . (is_null($dir) ? '' : ' ' . $dir);
 
 		return $this;
 	}
@@ -470,9 +471,8 @@ class DBALite_Select
 				$table .= ' AS ' . $tabledata['alias'];
 			}
 			if (!is_null($tabledata['joinType'])) {
-				$join = strtoupper($tabledata['joinType']) . ' JOIN ' . $table . ' ';
-				$join .= $tabledata['joinCondition'];
-			//	$join .= (!empty($tabledata['joinCondition'])) ? $tabledata['joinCondition'] : '';
+				$join = strtoupper($tabledata['joinType']) . ' JOIN ' . $table;
+				$join .= (!is_null($tabledata['joinCondition'])) ? ' ' . $tabledata['joinCondition'] : '';
 				$joins[] = $join;
 			} else {
 				$from[] = $table;
@@ -480,7 +480,7 @@ class DBALite_Select
 		}
 		$sql .= ' FROM ' . implode(', ', $from);
 		if (count($joins)) {
-			$sql .= ' ' . implode(' ', $joins);
+			$sql .= ' ' . implode(PHP_EOL, $joins);
 		}
 
 		// Add WHERE clauses
