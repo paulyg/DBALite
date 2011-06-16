@@ -24,7 +24,7 @@
 
 /**
  * The test suite for DBALite uses the PHPUnit testing framework. The tests
- * were writen using PHPUnit 3.4. Compatability with older versions can not
+ * were writen using PHPUnit 3.5. Compatability with older versions can not
  * be guarenteed. If you have an older version you are encouraged to upgrade.
  * To install PHPUnit simply run the following from the command line.
  *
