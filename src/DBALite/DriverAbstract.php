@@ -72,6 +72,13 @@ abstract class DBALite_DriverAbstract
 	protected $_pdo = null;
 
 	/**
+	 * Name of driver (aka brand) of database in use.
+	 * @var string
+	 * @abstract
+	 */
+	protected $_driver;
+
+	/**
 	 * Holds passed config array.
 	 * @var array
 	 */
@@ -82,6 +89,36 @@ abstract class DBALite_DriverAbstract
 	 * @var array
 	 */
 	protected $_driverOptions;
+
+	/**
+	 * Character to use when quoting strings in queries.
+	 *
+	 * For info only. @see DBALite_DriverAbstract::quote
+	 * @var string
+	 * @abstract
+	 */
+	protected $_quoteChar;
+
+	/**
+	 * Character to use when quoting identifiers.
+	 * @var string
+	 * @abstract
+	 */
+	protected $_quoteIdentChar;
+
+	/**
+	 * The native method of placeholding data for binding in prepared statements.
+	 * @var int
+	 * @abstract
+	 */
+	protected $_nativePlaceholder;
+
+	/**
+	 * Special options availible to a particular driver.
+	 * @var array
+	 * @abstract
+	 */
+	protected $_availibleOptions;
 
 	/**
 	 * Fetch mode for results.
