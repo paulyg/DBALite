@@ -8,9 +8,8 @@
  *
  * @package DBALite
  * @author Paul Garvin <paul@paulgarvin.net>
- * @copyright Copyright 2008, 2009, 2010 Paul Garvin. All rights reserved.
+ * @copyright Copyright 2008-2012 Paul Garvin. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-3.0-standalone.html GNU General Public License
- * @link
  *
  * DBALite is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,141 +56,147 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /**
  * DBALite driver for SQL Server databases.
+ *
+ * DBALite has dropped support for Microsoft SQL Server. This file was written but
+ * the test suite was never run against SQL Server. Several hurdles were encountered
+ * trying to setup a test environment, the biggest is lack of a proper Windows
+ * XP/Vista/7 Pro license. This file is being left in the package in case anyone
+ * wants to pick it up and test against SQL Server.
+ *
+ * Also the original intent was to try and use the ODBC driver to connect to
+ * SQL Server. Since then Microsoft has released the official PDO-SQLSRV driver.
+ *
  * @package DBALite
- * @subpackage Drivers
  * @todo Need to fix limit()
+ * @deprecated
  */
 class DBALite_Driver_Mssql extends DBALite_DriverAbstract
 {
-	/**
-	 * Name of driver (aka brand) of database in use.
-	 * @var string
-	 */
-	protected $_driver = 'odbc';
+    /**
+     * Name of driver (aka brand) of database in use.
+     * @var string
+     */
+    protected $_driver = 'sqlsrv';
 
-	/**
-	 * Character to use when quoting strings in queries.
-	 *
-	 * For info only. @see DBALite_DriverAbstract::quote
-	 * @var string
-	 */
-	protected $_quoteChar = '';
+    /**
+     * Character to use when quoting strings in queries.
+     *
+     * For info only. @see DBALite_DriverAbstract::quote
+     * @var string
+     */
+    protected $_quoteChar = '';
 
-	/**
-	 * Character to use when quoting identifiers.
-	 * @var string
-	 */
-	protected $_quoteIdentChar = '';
+    /**
+     * Character to use when quoting identifiers.
+     * @var string
+     */
+    protected $_quoteIdentChar = '';
 
-	/**
-	 * The native method of placeholding data for binding in prepared statements.
-	 * @var int
-	 */
-	protected $_nativePlaceholder = DBALite::PARAM_POSITIONAL;
+    /**
+     * The native method of placeholding data for binding in prepared statements.
+     * @var int
+     */
+    protected $_nativePlaceholder = DBALite::PARAM_POSITIONAL;
 
-	/**
-	 * Special options availible to this driver
-	 * @var array
-	 */
-	protected $_availibleOptions = array(
-		PDO::ODBC_ATTR_ASSUME_UTF8
-	);
+    /**
+     * Special options availible to this driver
+     * @var array
+     */
+    protected $_availibleOptions = array();
 
-	/**
-	 * Creates connection to database.
-	 *
-	 * Configuration array must contain a 'dbname' or 'dsn'. It may contain a
-	 * 'username' and 'password'.
-	 *
-	 * @param array $config
-	 */
-	protected function _connect(array $config)
-	{
-		$dsn = 'odbc:';
-		if (isset($config['dsn'])) {
-			$dsn .= $config['host'] . ';';
-		} elseif (isset($config['dbname'])) {
-			$dsn .= $config['dbname'] . ';';
-		} else {
-			throw new DBALite_Exception("You must supply a 'dsn' or 'dbname' string in your config array for this driver.");
-		}
+    /**
+     * Creates connection to database.
+     *
+     * Configuration array must contain a 'dbname' or 'dsn'. It may contain a
+     * 'username' and 'password'.
+     *
+     * @param array $config
+     */
+    protected function _connect(array $config)
+    {
+        $dsn = 'sqlsrv:';
+        if (isset($config['dsn'])) {
+            $dsn .= $config['host'] . ';';
+        } elseif (isset($config['dbname'])) {
+            $dsn .= $config['dbname'] . ';';
+        } else {
+            throw new DBALite_Exception("You must supply a 'dsn' or 'dbname' string in your config array for this driver.");
+        }
 
-		if (isset($config['username'])) {
-			$dsn .= "UID={$config['username']};";
-		}
-		if (isset($config['password'])) {
-			$dsn .= "PWD={$config['password']};";
-		}
-		
-		try {
-			if (empty($this->_driverOptions)) {
-				$conn = new PDO($dsn);
-			} else {
-				$conn = new PDO($dsn, '', '', $this->_driverOptions);
-			}
-		} catch (PDOException $e) {
-			throw new DBALite_Exception("Connection to SQL Server database failed.", $e);
-		}
+        if (isset($config['username'])) {
+            $dsn .= "UID={$config['username']};";
+        }
+        if (isset($config['password'])) {
+            $dsn .= "PWD={$config['password']};";
+        }
+        
+        try {
+            if (empty($this->_driverOptions)) {
+                $conn = new PDO($dsn);
+            } else {
+                $conn = new PDO($dsn, '', '', $this->_driverOptions);
+            }
+        } catch (PDOException $e) {
+            throw new DBALite_Exception("Connection to SQL Server database failed.", $e);
+        }
 
-		$this->_pdo = $conn;
-	}
+        $this->_pdo = $conn;
+    }
 
-	/**
-	 * Adds the SQL needed to do a limit query.
-	 *
-	 * @param string $sql SQL statement.
-	 * @param integer $limit Number of rows to return.
-	 * @param integer $offset Offset number of rows.
-	 * @return string
-	 */
-	public function limit($sql, $limit, $offset = 0)
-	{
-		throw new DBALite_Exception('limit() is not currently supported on SQL Server. See FAQ.');
-		/* The below is wrong, need to update
-		$sql = $sql . " LIMIT $limit";
-		if ($offset) {
-			$sql = $sql . " OFFSET $offset";
-		}
-		return $sql; */
-	}
+    /**
+     * Adds the SQL needed to do a limit query.
+     *
+     * @param string $sql SQL statement.
+     * @param integer $limit Number of rows to return.
+     * @param integer $offset Offset number of rows.
+     * @return string
+     */
+    public function limit($sql, $limit, $offset = 0)
+    {
+        throw new DBALite_Exception('limit() is not currently supported on SQL Server. See FAQ.');
+        /* The below is wrong, need to update
+        $sql = $sql . " LIMIT $limit";
+        if ($offset) {
+            $sql = $sql . " OFFSET $offset";
+        }
+        return $sql; */
+    }
 
-	/**
-	 * Place the proper delimitors around table and column names.
-	 * This is overloaded b/c SQL Server uses square brackets for quoting.
-	 *
-	 * @param string $identifier
-	 * @return string
-	 */
-	public function quoteIdentifier($identifier)
-	{
-		if (! $this->_autoQuoteIdents) {
-			return $identifier;
-		}
+    /**
+     * Place the proper delimitors around table and column names.
+     * This is overloaded b/c SQL Server uses square brackets for quoting.
+     *
+     * @param string $identifier
+     * @return string
+     */
+    public function quoteIdentifier($identifier)
+    {
+        if (! $this->_autoQuoteIdents) {
+            return $identifier;
+        }
 
-		$idents = explode('.', $identifier);
+        $idents = explode('.', $identifier);
 
-		foreach ($idents as $ident) {
-			$ident = '[' . $ident . ']';
-		}
+        foreach ($idents as $ident) {
+            $ident = '[' . $ident . ']';
+        }
 
-		$quoted = implode('.', $idents);
+        $quoted = implode('.', $idents);
 
-		return $quoted;
-	}
+        return $quoted;
+    }
 
-	/**
-	 * Get the ID in the autoincrementing column for the last inserted row.
-	 *
-	 * @param string $seq Will be ignored, SQL Server does not need this parameter.
-	 */
-	public function lastInsertId($seq = '')
-	{
-		$sql = 'SELECT SCOPE_IDENTITY()';
+    /**
+     * Get the ID in the autoincrementing column for the last inserted row.
+     *
+     * @param string $seq Will be ignored, SQL Server does not need this parameter.
+     */
+    public function lastInsertId($seq = '')
+    {
+        $sql = 'SELECT SCOPE_IDENTITY()';
 
-		return (int) $this->queryOne($sql);
-	}
+        return (int) $this->queryOne($sql);
+    }
 }
-# vim:ff=unix:ts=4:sw=4:

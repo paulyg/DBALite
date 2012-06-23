@@ -8,9 +8,8 @@
  *
  * @package DBALite
  * @author Paul Garvin <paul@paulgarvin.net>
- * @copyright Copyright 2008, 2009, 2010 Paul Garvin. All rights reserved.
+ * @copyright Copyright 2008-2012 Paul Garvin. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-3.0-standalone.html GNU General Public License
- * @link
  *
  * DBALite is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +56,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /**
  * DBALite driver for PostgreSQL databases.
  * @package DBALite
@@ -65,108 +63,107 @@
  */
 class DBALite_Driver_Pgsql extends DBALite_DriverAbstract
 {
-	/**
-	 * Name of driver (aka brand) of database in use.
-	 * @var string
-	 */
-	protected $_driver = 'pgsql';
+    /**
+     * Name of driver (aka brand) of database in use.
+     * @var string
+     */
+    protected $_driver = 'pgsql';
 
-	/**
-	 * Character to use when quoting strings in queries.
-	 *
-	 * For info only. @see DBALite_DriverAbstract::quote
-	 * @var string
-	 */
-	protected $_quoteChar = '\'';
+    /**
+     * Character to use when quoting strings in queries.
+     *
+     * For info only. @see DBALite_DriverAbstract::quote
+     * @var string
+     */
+    protected $_quoteChar = '\'';
 
-	/**
-	 * Character to use when quoting identifiers.
-	 * @var string
-	 */
-	protected $_quoteIdentChar = '"';
+    /**
+     * Character to use when quoting identifiers.
+     * @var string
+     */
+    protected $_quoteIdentChar = '"';
 
-	/**
-	 * The native method of placeholding data for binding in prepared statements.
-	 * @var int
-	 */
-	protected $_nativePlaceholder = DBALite::PARAM_POSITIONAL;
+    /**
+     * The native method of placeholding data for binding in prepared statements.
+     * @var int
+     */
+    protected $_nativePlaceholder = DBALite::PARAM_POSITIONAL;
 
-	/**
-	 * Special options availible to this driver
-	 * @var array
-	 */
-	protected $_availibleOptions = array();
+    /**
+     * Special options availible to this driver
+     * @var array
+     */
+    protected $_availibleOptions = array();
 
-	/**
-	 * Creates connection to database.
-	 *
-	 * Configuration array must contain a 'dbname', 'username' and 'password'.
-	 * Optional connection settings 'host and 'port' may be passed and will be
-	 * used if present.
-	 *
-	 * @param array $config
-	 */
-	protected function _connect(array $config)
-	{
-		$dsn = 'pgsql:';
-		if (isset($config['host'])) {
-			$dsn .= "host={$config['host']} ";
-		}
-		if (isset($config['port'])) {
-			$dsn .= "port={$config['port']} ";
-		}
+    /**
+     * Creates connection to database.
+     *
+     * Configuration array must contain a 'dbname', 'username' and 'password'.
+     * Optional connection settings 'host and 'port' may be passed and will be
+     * used if present.
+     *
+     * @param array $config
+     */
+    protected function _connect(array $config)
+    {
+        $dsn = 'pgsql:';
+        if (isset($config['host'])) {
+            $dsn .= "host={$config['host']} ";
+        }
+        if (isset($config['port'])) {
+            $dsn .= "port={$config['port']} ";
+        }
 
-		$dsn .= "dbname={$config['dbname']} ";
+        $dsn .= "dbname={$config['dbname']} ";
 
-		$dsn .= "user={$config['username']} ";
-		$dsn .= "password={$config['password']}";
-		
-		try {
-			if (empty($this->_driverOptions)) {
-				$conn = new PDO($dsn);
-			} else {
-				$conn = new PDO($dsn, '', '', $this->_driverOptions);
-			}
-		} catch (PDOException $e) {
-			throw new DBALite_Exception("Connection to PostgreSQL database failed.", $e);
-		}
+        $dsn .= "user={$config['username']} ";
+        $dsn .= "password={$config['password']}";
+        
+        try {
+            if (empty($this->_driverOptions)) {
+                $conn = new PDO($dsn);
+            } else {
+                $conn = new PDO($dsn, '', '', $this->_driverOptions);
+            }
+        } catch (PDOException $e) {
+            throw new DBALite_Exception("Connection to PostgreSQL database failed.", $e);
+        }
 
-		$this->_pdo = $conn;
-	}
+        $this->_pdo = $conn;
+    }
 
-	/**
-	 * Adds the SQL needed to do a limit query.
-	 *
-	 * @param string $sql SQL statement.
-	 * @param integer $limit Number of rows to return.
-	 * @param integer $offset Offset number of rows.
-	 * @return string
-	 */
-	public function limit($sql, $limit, $offset = 0)
-	{
-		$sql = $sql . " LIMIT $limit";
-		if ($offset) {
-			$sql = $sql . " OFFSET $offset";
-		}
-		return $sql;
-	}
+    /**
+     * Adds the SQL needed to do a limit query.
+     *
+     * @param string $sql SQL statement.
+     * @param integer $limit Number of rows to return.
+     * @param integer $offset Offset number of rows.
+     * @return string
+     */
+    public function limit($sql, $limit, $offset = 0)
+    {
+        $sql = $sql . " LIMIT $limit";
+        if ($offset) {
+            $sql = $sql . " OFFSET $offset";
+        }
+        return $sql;
+    }
 
-	/**
-	 * Get the ID in the autoincrementing column for the last inserted row.
-	 *
-	 * @param string $seq Name of the sequence column for the table.
-	 */
-	public function lastInsertId($seq = '')
-	{
-		if (empty($seq)) {
-			throw new DBALite_Exception('You must provide a sequence column name when using lastInsertId() with PostgreSQL.');
-		}
-		
-		if (substr($seq, -4) != '_seq') {
-			$seq = $seq . '_seq';
-		}
+    /**
+     * Get the ID in the autoincrementing column for the last inserted row.
+     *
+     * @param string $seq Name of the sequence column for the table.
+     */
+    public function lastInsertId($seq = '')
+    {
+        if (empty($seq)) {
+            throw new DBALite_Exception('You must provide a sequence column name when using lastInsertId() with PostgreSQL.');
+        }
+        
+        if (substr($seq, -4) != '_seq') {
+            $seq = $seq . '_seq';
+        }
 
-		return $this->_pdo->lastInsertId($seq);
-	}
+        return $this->_pdo->lastInsertId($seq);
+    }
 }
-# vim:ff=unix:ts=4:sw=4:

@@ -8,9 +8,8 @@
  *
  * @package DBALite
  * @author Paul Garvin <paul@paulgarvin.net>
- * @copyright Copyright 2008, 2009, 2010 Paul Garvin. All rights reserved.
+ * @copyright Copyright 2008-2012 Paul Garvin. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-3.0-standalone.html GNU General Public License
- * @link
  *
  * DBALite is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +56,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /**
  * DBALite driver for SQLite databases.
  * @package DBALite
@@ -65,89 +63,88 @@
  */
 class DBALite_Driver_Sqlite extends DBALite_DriverAbstract
 {
-	/**
-	 * Name of driver (aka brand) of database in use.
-	 * @var string
-	 */
-	protected $_driver = 'sqlite';
+    /**
+     * Name of driver (aka brand) of database in use.
+     * @var string
+     */
+    protected $_driver = 'sqlite';
 
-	/**
-	 * Character to use when quoting strings in queries.
-	 *
-	 * For info only. @see DBALite_DriverAbstract::quote
-	 * @var string
-	 */
-	protected $_quoteChar = '\'';
+    /**
+     * Character to use when quoting strings in queries.
+     *
+     * For info only. @see DBALite_DriverAbstract::quote
+     * @var string
+     */
+    protected $_quoteChar = '\'';
 
-	/**
-	 * Character to use when quoting identifiers.
-	 * @var string
-	 */
-	protected $_quoteIdentChar = '"';
+    /**
+     * Character to use when quoting identifiers.
+     * @var string
+     */
+    protected $_quoteIdentChar = '"';
 
-	/**
-	 * The native method of placeholding data for binding in prepared statements.
-	 * @var int
-	 */
-	protected $_nativePlaceholder = DBALite::PARAM_NAMED;
+    /**
+     * The native method of placeholding data for binding in prepared statements.
+     * @var int
+     */
+    protected $_nativePlaceholder = DBALite::PARAM_NAMED;
 
-	/**
-	 * Special options availible to this driver.
-	 * @var array
-	 */
-	protected $_availibleOptions = array();
+    /**
+     * Special options availible to this driver.
+     * @var array
+     */
+    protected $_availibleOptions = array();
 
-	/**
-	 * Creates connection to database.
-	 *
-	 * Only a 'dbname' needs to present in the configuration array.
-	 * If must be a fully qualified path the the Sqlite database file or
-	 * :memory: to create an in-memory database.
-	 *
-	 * @param array $config
-	 */
-	protected function _connect(array $config)
-	{
-		$dsn = 'sqlite:' . $config['dbname'];
+    /**
+     * Creates connection to database.
+     *
+     * Only a 'dbname' needs to present in the configuration array.
+     * If must be a fully qualified path the the Sqlite database file or
+     * :memory: to create an in-memory database.
+     *
+     * @param array $config
+     */
+    protected function _connect(array $config)
+    {
+        $dsn = 'sqlite:' . $config['dbname'];
 
-		try {
-			if (empty($this->_driverOptions)) {
-				$conn = new PDO($dsn);
-			} else {
-				$conn = new PDO($dsn, '', '', $this->_driverOptions);
-			}
-		} catch (PDOException $e) {
-			throw new DBALite_Exception("Connection to SQLite database failed.", $e);
-		}
+        try {
+            if (empty($this->_driverOptions)) {
+                $conn = new PDO($dsn);
+            } else {
+                $conn = new PDO($dsn, '', '', $this->_driverOptions);
+            }
+        } catch (PDOException $e) {
+            throw new DBALite_Exception("Connection to SQLite database failed.", $e);
+        }
 
-		$this->_pdo = $conn;
-	}
+        $this->_pdo = $conn;
+    }
 
-	/**
-	 * Adds the SQL needed to do a limit query.
-	 *
-	 * @param string $sql SQL statement.
-	 * @param integer $limit Number of rows to return.
-	 * @param integer $offset Offset number of rows.
-	 * @return string
-	 */
-	public function limit($sql, $limit, $offset = 0)
-	{
-		$sql = $sql . " LIMIT $limit";
-		if ($offset) {
-			$sql = $sql . " OFFSET $offset";
-		}
-		return $sql;
-	}
+    /**
+     * Adds the SQL needed to do a limit query.
+     *
+     * @param string $sql SQL statement.
+     * @param integer $limit Number of rows to return.
+     * @param integer $offset Offset number of rows.
+     * @return string
+     */
+    public function limit($sql, $limit, $offset = 0)
+    {
+        $sql = $sql . " LIMIT $limit";
+        if ($offset) {
+            $sql = $sql . " OFFSET $offset";
+        }
+        return $sql;
+    }
 
-	/**
-	 * Get the ID in the autoincrementing column for the last inserted row.
-	 *
-	 * @param string $seq Will be ignored, SQLite does not need this parameter.
-	 */
-	public function lastInsertId($seq = '')
-	{
-		return $this->_pdo->lastInsertId();
-	}
+    /**
+     * Get the ID in the autoincrementing column for the last inserted row.
+     *
+     * @param string $seq Will be ignored, SQLite does not need this parameter.
+     */
+    public function lastInsertId($seq = '')
+    {
+        return $this->_pdo->lastInsertId();
+    }
 }
-# vim:ff=unix:ts=4:sw=4:
