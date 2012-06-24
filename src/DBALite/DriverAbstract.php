@@ -135,7 +135,7 @@ abstract class DBALite_DriverAbstract
         'lazy'      => PDO::FETCH_LAZY,
         'num'       => PDO::FETCH_NUM,
         'obj'       => PDO::FETCH_OBJ
-        );
+    );
 
     /**
      * Case of column names returned in queries.
@@ -151,7 +151,23 @@ abstract class DBALite_DriverAbstract
         'lower'     => PDO::CASE_LOWER,
         'natural'   => PDO::CASE_NATURAL,
         'upper'     => PDO::CASE_UPPER
-        );
+    );
+
+    /**
+     * Null and empty string handling mode.
+     * @var integer
+     */
+    protected $nullMode = PDO::NULL_NATURAL;
+
+    /**
+     * Array map of null <=> empty string handling modes.
+     * @var array
+     */
+    protected $nullModes = array(
+        'natural'        => PDO::NULL_NATURAL,
+        'string_to_null' => PDO::NULL_EMPTY_STRING,
+        'null_to_string' => PDO::NULL_TO_STRING
+    );
 
     /**
      * Automatic quoting of idenifiers on or off.
@@ -186,6 +202,7 @@ abstract class DBALite_DriverAbstract
 
         $this->_pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->_pdo->setAttribute(PDO::ATTR_CASE, $this->_caseFolding);
+        $this->_pdo->setAttribute(PDO::ATTR_ORACLE_NULLS, $this->_nullMode);
     }
 
     /**
@@ -255,13 +272,25 @@ abstract class DBALite_DriverAbstract
             case 'casefolding':
                 if (isset(self::$foldingModes[$val])) {
                     $this->_caseFolding = self::$foldingModes[$val];
-                } elseif (array_key_exists($val, self::$foldingModes)) {
+                } elseif (in_array($val, self::$foldingModes, true)) {
                     $this->_caseFolding = $val;
                 } else {
                     throw new DBALite_Exception("Fetch mode '$val' not supported or unknown.");
                 }
                 if (isset($this->_pdo)) {
                     $this->_pdo->setAttribute(PDO::ATTR_CASE, $this->_caseFolding);
+                }
+                break;
+            case 'nullhandling':
+                if (isset(self::$nullModes[$val])) {
+                    $this->_nullMode = self::$nullModes[$val];
+                } elseif (in_array($val, self::$nullModes, true)) {
+                    $this->_nullMode = $val;
+                } else {
+                    throw new DBALite_Exception("Null handling mode '$val' not supported or unknown.");
+                }
+                if (isset($this->_pdo)) {
+                    $this->_pdo->setAttribute(PDO::ATTR_ORACLE_NULLS, $this->_nullMode);
                 }
                 break;
             case 'autoquoteidentifiers':
@@ -287,6 +316,9 @@ abstract class DBALite_DriverAbstract
                 break;
             case 'casefolding':
                 return array_search($this->_caseFolding, self::$foldingModes);
+                break;
+            case 'nullhandling':
+                return array_search($this->_nullMode, self::$nullModes);
                 break;
             case 'autoquoteidentifiers':
                 return $this->_autoQuoteIdents;
