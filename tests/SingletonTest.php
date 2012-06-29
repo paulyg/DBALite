@@ -4,9 +4,8 @@
  *
  * @package DBALiteTest
  * @author Paul Garvin <paul@paulgarvin.net>
- * @copyright Copyright 2008, 2009, 2010 Paul Garvin. All rights reserved.
+ * @copyright Copyright 2008-2012 Paul Garvin. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-3.0-standalone.html GNU General Public License
- * @link
  *
  * DBALite is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +26,12 @@
  */
 class SingletonTest extends PHPUnit_Framework_TestCase
 {
-	public function testGetSingleton()
-	{
-		$driver = 'sqlite';
-		$config = array('dbname' => './Data/SqliteTest.sqlite');
-		$first = DBALite::getSingleton($driver, $config);
-		$second = DBALite::getSingleton();
-		$this->assertEquals($first, $second);
-	}
+    public function testGetSingleton()
+    {
+        $driver = 'sqlite';
+        $config = array('dbname' => './Data/SqliteTest.sqlite');
+        $first = DBALite::getSingleton($driver, $config);
+        $second = DBALite::getSingleton();
+        $this->assertEquals($first, $second);
+    }
 }

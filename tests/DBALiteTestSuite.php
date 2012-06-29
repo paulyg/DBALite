@@ -4,9 +4,8 @@
  *
  * @package DBALiteTest
  * @author Paul Garvin <paul@paulgarvin.net>
- * @copyright Copyright 2008, 2009, 2010 Paul Garvin. All rights reserved.
+ * @copyright Copyright 2008-2012 Paul Garvin. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-3.0-standalone.html GNU General Public License
- * @link
  *
  * DBALite is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +27,9 @@
  * be guarenteed. If you have an older version you are encouraged to upgrade.
  * To install PHPUnit simply run the following from the command line.
  *
- * pear channel-discover pear.phpunit.de
- * pear channel-discover pear.symfony-project.com
- * pear install phpunit/PHPUnit
- * - You may have to run the commands as root or administrator.
+ * pear config-set auto_discover 1
+ * pear install pear.phpunit.de/PHPUnit
+ * - You may have to run the commands as root or administrator (sudo or similar).
  *
  * This test suite will automatically add the tests for a database driver if
  * the PDO extension for that driver is loaded and it is able to connect to
@@ -66,57 +64,57 @@
  */
 class DBALiteTestSuite
 {
-	public static function suite()
-	{
-		$suite = new PHPUnit_Framework_TestSuite();
+    public static function suite()
+    {
+        $suite = new PHPUnit_Framework_TestSuite();
 
-		$suite->addTestSuite('DBALiteTest');
-		$suite->addTestSuite('DBALite_DriverAbstractTest');
-		$suite->addTestSuite('DBALite_SelectTest');
+        $suite->addTestSuite('DBALiteTest');
+        $suite->addTestSuite('DBALite_DriverAbstractTest');
+        $suite->addTestSuite('DBALite_SelectTest');
 
-		if (extension_loaded('pdo_sqlite')) {
-			require_once('DBALite/Driver/SqliteTest.php');
-			require_once('DBALite/Statement/SqliteTest.php');
-			$suite->addTestSuite('DBALite_Driver_SqliteTest');
-			$suite->addTestSuite('DBALite_Statement_SqliteTest');
-			echo 'Sqlite tests to be executed.' . PHP_EOL;
-		}
+        if (extension_loaded('pdo_sqlite')) {
+            require_once('DBALite/Driver/SqliteTest.php');
+            require_once('DBALite/Statement/SqliteTest.php');
+            $suite->addTestSuite('DBALite_Driver_SqliteTest');
+            $suite->addTestSuite('DBALite_Statement_SqliteTest');
+            echo 'Sqlite tests to be executed.' . PHP_EOL;
+        }
 
-		if (extension_loaded('pdo_mysql')) {
-			require_once('DBALite/Driver/MysqlTest.php');
-			require_once('DBALite/Statement/MysqlTest.php');
-			try {
-				$con = new Pdo('mysql:host=localhost;dbname=DBALite_Test', 'dbalite', 'testme');
-				$suite->addTestSuite('DBALite_Driver_MysqlTest');
-				$suite->addTestSuite('DBALite_Statement_MysqlTest');
-				echo 'MySQL tests to be executed.' . PHP_EOL;
-			} catch (PDOException $e) {
-			}
-		}
+        if (extension_loaded('pdo_mysql')) {
+            require_once('DBALite/Driver/MysqlTest.php');
+            require_once('DBALite/Statement/MysqlTest.php');
+            try {
+                $con = new Pdo('mysql:host=localhost;dbname=DBALite_Test', 'dbalite', 'testme');
+                $suite->addTestSuite('DBALite_Driver_MysqlTest');
+                $suite->addTestSuite('DBALite_Statement_MysqlTest');
+                echo 'MySQL tests to be executed.' . PHP_EOL;
+            } catch (PDOException $e) {
+            }
+        }
 
-		if (extension_loaded('pdo_pgsql')) {
-			require_once('DBALite/Driver/PgsqlTest.php');
-			require_once('DBALite/Statement/PgsqlTest.php');
-			try {
-				$con = new PDO('pgsql:host=localhost dbname=DBALiteTest', 'dbalite', 'testme');
-				$suite->addTestSuite('DBALite_Driver_PgsqlTest');
-				$suite->addTestSuite('DBALite_Statement_PgsqlTest');
-				echo 'PostgreSQL tests to be executed.' . PHP_EOL;
-			} catch (PDOException $e) {
-			}
-		}
+        if (extension_loaded('pdo_pgsql')) {
+            require_once('DBALite/Driver/PgsqlTest.php');
+            require_once('DBALite/Statement/PgsqlTest.php');
+            try {
+                $con = new PDO('pgsql:host=localhost dbname=DBALiteTest', 'dbalite', 'testme');
+                $suite->addTestSuite('DBALite_Driver_PgsqlTest');
+                $suite->addTestSuite('DBALite_Statement_PgsqlTest');
+                echo 'PostgreSQL tests to be executed.' . PHP_EOL;
+            } catch (PDOException $e) {
+            }
+        }
 
         /*
-		if (extension_loaded('pdo_sqlsrv')) {
-			require_once('DBALite/Driver/SqlsrvTest.php');
-			require_once('DBALite/Statement/SqlsrvTest.php');
-			$suite->addTestSuite('DBALite_Driver_SqlsrvTest');
-			$suite->addTestSuite('DBALite_Statement_SqlsrvTest');
-			echo 'SQL Server tests to be executed' . PHP_EOL;
-		}
+        if (extension_loaded('pdo_sqlsrv')) {
+            require_once('DBALite/Driver/SqlsrvTest.php');
+            require_once('DBALite/Statement/SqlsrvTest.php');
+            $suite->addTestSuite('DBALite_Driver_SqlsrvTest');
+            $suite->addTestSuite('DBALite_Statement_SqlsrvTest');
+            echo 'SQL Server tests to be executed' . PHP_EOL;
+        }
         */
 
-		return $suite;
-	}
+        return $suite;
+    }
 }
 ?>

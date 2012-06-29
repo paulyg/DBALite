@@ -4,9 +4,8 @@
  *
  * @package DBALiteTest
  * @author Paul Garvin <paul@paulgarvin.net>
- * @copyright Copyright 2008, 2009, 2010 Paul Garvin. All rights reserved.
+ * @copyright Copyright 2008-2012 Paul Garvin. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-3.0-standalone.html GNU General Public License
- * @link
  *
  * DBALite is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,31 +27,31 @@
 class DBALite_Statement_MysqlTest extends DBALite_Statement_CommonTests
 {
 
-	public static function setUpBeforeClass()
-	{
-		$config = array(
-			'dbname' => 'DBALite_Test',
-			'username' => 'dbalite',
-			'password' => 'testme'
-		);
-		$csvfile = DATA_DIR . 'TABLE_Products.csv';
-		$pdoObj = new PDO("mysql:dbname={$config['dbname']}", $config['username'], $config['password']);
-		$pdoObj->exec("SET NAMES 'utf8'");
-		self::$phpunitConn = new PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection($pdoObj);
-		self::$dataset = new PHPUnit_Extensions_Database_Dataset_CsvDataSet();
-		self::$dataset->addTable('Products', $csvfile);
-		$setupOperation = PHPUnit_Extensions_Database_Operation_Factory::CLEAN_INSERT();
-		$setupOperation->execute(self::$phpunitConn, self::$dataset);
+    public static function setUpBeforeClass()
+    {
+        $config = array(
+            'dbname' => 'DBALite_Test',
+            'username' => 'dbalite',
+            'password' => 'testme'
+        );
+        $csvfile = DATA_DIR . 'TABLE_Products.csv';
+        $pdoObj = new PDO("mysql:dbname={$config['dbname']}", $config['username'], $config['password']);
+        $pdoObj->exec("SET NAMES 'utf8'");
+        self::$phpunitConn = new PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection($pdoObj);
+        self::$dataset = new PHPUnit_Extensions_Database_Dataset_CsvDataSet();
+        self::$dataset->addTable('Products', $csvfile);
+        $setupOperation = PHPUnit_Extensions_Database_Operation_Factory::CLEAN_INSERT();
+        $setupOperation->execute(self::$phpunitConn, self::$dataset);
 
-		$driver = DBALite::factory('mysql', $config);
-		$sql = 'SELECT * FROM Products WHERE CategoryID = ?';
-		self::$dbaliteStmt = $driver->prepare($sql);
-		self::$dbaliteDriver = $driver;
-	}
+        $driver = DBALite::factory('mysql', $config);
+        $sql = 'SELECT * FROM Products WHERE CategoryID = ?';
+        self::$dbaliteStmt = $driver->prepare($sql);
+        self::$dbaliteDriver = $driver;
+    }
 
-	public static function tearDownAfterClass()
-	{
-		$teardownOperation = PHPUnit_Extensions_Database_Operation_Factory::TRUNCATE();
-		$teardownOperation->execute(self::$phpunitConn, self::$dataset);
-	}
+    public static function tearDownAfterClass()
+    {
+        $teardownOperation = PHPUnit_Extensions_Database_Operation_Factory::TRUNCATE();
+        $teardownOperation->execute(self::$phpunitConn, self::$dataset);
+    }
 }
