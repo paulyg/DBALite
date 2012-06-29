@@ -101,18 +101,20 @@ class DBALiteTestSuite
 				$con = new PDO('pgsql:host=localhost dbname=DBALiteTest', 'dbalite', 'testme');
 				$suite->addTestSuite('DBALite_Driver_PgsqlTest');
 				$suite->addTestSuite('DBALite_Statement_PgsqlTest');
-				echo 'Postgre tests to be executed.' . PHP_EOL;
+				echo 'PostgreSQL tests to be executed.' . PHP_EOL;
 			} catch (PDOException $e) {
 			}
 		}
 
-		if (extension_loaded('pdo_odbc')) {
-			require_once('DBALite/Driver/MssqlTest.php');
-			require_once('DBALite/Statement/MssqlTest.php');
-			$suite->addTestSuite('DBALite_Driver_MssqlTest');
-			$suite->addTestSuite('DBALite_Statement_MssqlTest');
-			echo 'MSSQL tests to be executed' . PHP_EOL;
+        /*
+		if (extension_loaded('pdo_sqlsrv')) {
+			require_once('DBALite/Driver/SqlsrvTest.php');
+			require_once('DBALite/Statement/SqlsrvTest.php');
+			$suite->addTestSuite('DBALite_Driver_SqlsrvTest');
+			$suite->addTestSuite('DBALite_Statement_SqlsrvTest');
+			echo 'SQL Server tests to be executed' . PHP_EOL;
 		}
+        */
 
 		return $suite;
 	}

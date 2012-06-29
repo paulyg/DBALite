@@ -72,7 +72,7 @@
  * @todo Need to fix limit()
  * @deprecated
  */
-class DBALite_Driver_Mssql extends DBALite_DriverAbstract
+class DBALite_Driver_Sqlsrv extends DBALite_DriverAbstract
 {
     /**
      * Name of driver (aka brand) of database in use.
@@ -86,13 +86,15 @@ class DBALite_Driver_Mssql extends DBALite_DriverAbstract
      * For info only. @see DBALite_DriverAbstract::quote
      * @var string
      */
-    protected $_quoteChar = '';
+    protected $_quoteChar = '\'';
 
     /**
      * Character to use when quoting identifiers.
+     *
+     * For info only in SQLSRV driver. @see quoteIdentifier
      * @var string
      */
-    protected $_quoteIdentChar = '';
+    protected $_quoteIdentChar = '[]';
 
     /**
      * The native method of placeholding data for binding in prepared statements.

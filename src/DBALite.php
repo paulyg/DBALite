@@ -54,7 +54,7 @@ class DBALite
      * List of database drivers supported by DBALite.
      * @var array
      */
-    protected static $supportedDrivers = array(/*'mssql',*/ 'mysql', 'pgsql', 'sqlite');
+    protected static $supportedDrivers = array('mysql', 'pgsql', 'sqlite', /*'sqlsrv'*/);
 
     /**
      * Placeholder for optional singleton DBALite driver.
