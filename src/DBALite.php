@@ -63,10 +63,17 @@ class DBALite
     private static $singleton = null;
 
     /**
+     * Private constructor since there are no instance methods on this class.
+     */
+    private function __construct() { }
+
+    /**
      * Create an instance of a DBALite database adapter.
      *
+     * @param string $driver The name of the RDBMS driver you wish to connect to.
      * Supported $driver values are: 'mysql', 'pgsql', or 'sqlite'.
      *
+     * @param array $config Additional information needed to make the connection.
      * The following are valid keys for the $config array:
      * <pre>
      * 'dbname'   REQUIRED The name of your database (full path & name for SQLite)
@@ -83,15 +90,13 @@ class DBALite
      * configuration keys accepted by that driver.
      * </pre>
      *
-     * @param  string $driver The name of the RDBMS driver you wish to connect to.
-     * @param  bool   $enforce_singleton Force the factory to implement the singleton pattern.
      * @return DBALite_DriverAbstract
      * @throws DBALite_Exception
      */
-    public static function factory($driver, $config, $enforce_singleton = false)
+    public static function factory($driver, $config)
     {
         if (!is_null(self::$singleton)) {
-            throw new DBALite_Exception('A driver has been created with the "enforce singleton" option. Use DBALite::getSingleton() to return the singleton driver or remove the third parameter from your previous DBALite::factory() call to be able to instantiate more than one driver');
+            throw new DBALite_Exception('A singleton connection has been created with DBALite::getSingleton(). Call DBALite::getSingleton() again to return the singleton connection instance. If you wish to be able to instantiate more than one connection replace all previous DBALite::getSingleton() calls with DBALite::factory() calls.');
         }
 
         if (is_string($driver)) {
@@ -124,32 +129,25 @@ class DBALite
 
         $instance = new $driver_class($config);
 
-        if ($enforce_singleton) {
-            self::$singleton = $instance;
-        }
-
         return $instance;
     }
 
     /**
-     * Return a singleton driver instance.
+     * Return a singleton connection instance.
      *
-     * If a singleton instance was created with DBALite::factory() retreive a
-     * reference to that object with this method. If a singleton instance has
-     * not been created yet it will be created for you.
+     * If a singleton instance has not been created yet it will be created for you.
      *
      * @see    DBALite::factory()
-     * @param  string $driver Needed first call only.
-     * @param  array  $config Needed first call only.
+     * @param  string $driver Needed on first call only.
+     * @param  array  $config Needed on first call only.
      * @return DBALite_DriverAbstract
      */
     public static function getSingleton($driver = '', $config = null)
     {
         if (is_null(self::$singleton)) {
-            return self::factory($driver, $config, true);
-        } else {
-            return self::$singleton;
+            self::$singleton = self::factory($driver, $config);
         }
+        return self::$singleton;
     }
 
     /**
