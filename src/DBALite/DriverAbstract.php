@@ -233,6 +233,9 @@ abstract class DBALite_DriverAbstract
             case 'setAttribute':
             case 'errorCode':
             case 'errorInfo':
+            case 'beginTransaction':
+            case 'commit':
+            case 'rollBack':
                 return call_user_func_array(array($this->_pdo, $method), $params);
             default:
                 throw new DBALite_Exception("Call to undefined method: $method. Not a valid PDO or DBALite method.");
@@ -679,7 +682,7 @@ abstract class DBALite_DriverAbstract
      *
      * @return void
      */
-    public function commit()
+    public function commitTransaction()
     {
         return $this->_pdo->commit();
     }
@@ -689,7 +692,7 @@ abstract class DBALite_DriverAbstract
      *
      * @return void
      */
-    public function rollback()
+    public function rollbackTransaction()
     {
         return $this->_pdo->rollBack();
     }
