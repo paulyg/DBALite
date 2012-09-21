@@ -45,7 +45,7 @@ $connection = DBALite::factory('mysql', $db_config);
 }}}
 
 ==Documentation==
-Effort is underway to add documentation to the Github wiki. Until then I'm sorry.
+Documentation is available in the [[https://github.com/paulyg/DBALite/wiki|Github Wiki]].
 
 ==Things You Should Be Aware Of==
 DBALite does several things for your automatically.

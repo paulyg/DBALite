@@ -157,13 +157,13 @@ abstract class DBALite_DriverAbstract
      * Null and empty string handling mode.
      * @var integer
      */
-    protected $nullMode = PDO::NULL_NATURAL;
+    protected $_nullMode = PDO::NULL_NATURAL;
 
     /**
      * Array map of null <=> empty string handling modes.
      * @var array
      */
-    protected $nullModes = array(
+    protected static $nullModes = array(
         'natural'        => PDO::NULL_NATURAL,
         'string_to_null' => PDO::NULL_EMPTY_STRING,
         'null_to_string' => PDO::NULL_TO_STRING
