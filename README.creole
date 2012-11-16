@@ -44,6 +44,9 @@ Plans were to support Microsoft SQL Server via the ODBC driver. Eventually they 
 $connection = DBALite::factory('mysql', $db_config);
 }}}
 
+==License==
+DBALite is licensed under the GNU Lesser General Public License 3.0. Simply that means you can use it in any project you like, Open Source/Proprietary/Free/Paid, but if you fork it that fork must remain open source and LGPL licensed. See the LICENSE.txt file in the root of te project.
+
 ==Documentation==
 Documentation is available in the [[https://github.com/paulyg/DBALite/wiki|Github Wiki]].
 
@@ -53,3 +56,6 @@ DBALite does several things for your automatically.
 {{{__toString()}}} magic method to get the most informative error message. {{{echo $exception;}}} will do the trick. The {{{DBALite_Exception}}} class encapsulates {{{PDOException}}}s and will show the PDO error message if the {{{__toString()}}} method is used.
 # DBALite assumes you want only associative arrays when you fetch results. You can change this default, call {{{setOption('fetchmode', $mode)}}} on your connection where {{{$mode}}} is one of {{{assoc, num, both, obj, lazy, default}}}.
 # On MySQL buffered queries are used to avoid the common errors associated with the default of unbuffered queries. This increases memory usage, but in 95% of use cases you won't notice it. If you are returning //really big// result sets this may cause you concern. Also the connection assumes UTF-8 encoding, the command {{{SET NAMES 'utf-8'}}} is run after the connection is opened. That is always how I program, with everything in UTF-8. And you should too!
+
+==The Future==
+The next version of the library will be namespaced and PSR-0 autoloader friendly. Otherwise the library is quite stable. I've been using it since 2008 for my projects (which are granted, small).
