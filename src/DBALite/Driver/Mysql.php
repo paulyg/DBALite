@@ -1,6 +1,6 @@
 <?php
 /**
- * DBALite - the lightweight, PDO based Database Abstraction Layer
+ * DBALite - a lightweight, PDO based Database Abstraction Layer
  *
  * DBALite requires PHP version 5.1.0 or greater
  * Additionally the PDO extension, and the PDO driver for any database you wish
@@ -8,20 +8,20 @@
  *
  * @package DBALite
  * @author Paul Garvin <paul@paulgarvin.net>
- * @copyright Copyright 2008-2012 Paul Garvin. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-3.0-standalone.html GNU General Public License
+ * @copyright Copyright 2008-2012 Paul Garvin.
+ * @license LGPL-3.0+
  *
  * DBALite is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
  *
  * DBALite is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with DBALite. If not, see <http://www.gnu.org/licenses/>.
  *
  * This file incorporates work covered by the following copyright and
@@ -129,6 +129,13 @@ class DBALite_Driver_Mysql extends DBALite_DriverAbstract
         }
         $dsn .= 'dbname=' . $config['dbname'];
 
+        // See http://www.php.net/manual/en/mysqlinfo.concepts.charset.php
+        $utf8OnConnect = false;
+        if (version_compare(PHP_VERSION, '5.3.6', '>=')) {
+            $dsn .= 'charset=utf8';
+            $utf8OnConnect = true;
+        }
+
         $username = $config['username'];
         $password = $config['password'];
         
@@ -149,8 +156,9 @@ class DBALite_Driver_Mysql extends DBALite_DriverAbstract
         $this->_pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         // For some unknown reason MySQL driver still emulates prepares by default.
         $this->_pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-        // Lot of issues with charset mismatches. Set this by default.
-        $this->_pdo->exec("SET NAMES 'utf8'");
+        if (!$utf8OnConnection) {
+            $this->_pdo->exec("SET NAMES 'utf8'");
+        }
     }
 
     /**

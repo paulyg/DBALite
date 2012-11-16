@@ -1,6 +1,6 @@
 <?php
 /**
- * DBALite - the lightweight, PDO based Database Abstraction Layer
+ * DBALite - a lightweight, PDO based Database Abstraction Layer
  *
  * DBALite requires PHP version 5.1.0 or greater.
  * Additionally the PDO extension, and the PDO driver for any database you wish
@@ -8,20 +8,20 @@
  *
  * @package DBALite
  * @author Paul Garvin <paul@paulgarvin.net>
- * @copyright Copyright 2008-2012 Paul Garvin. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-3.0-standalone.html GNU General Public License
+ * @copyright Copyright 2008-2012 Paul Garvin.
+ * @license LGPL-3.0+
  *
  * DBALite is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
  *
  * DBALite is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with DBALite. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -42,7 +42,7 @@ class DBALite
     /**
      * Class constants
      */
-    const VERSION = '0.3.1-beta';
+    const VERSION = '1.0.0';
     const ARRAY_MIXED = 0;
     const ARRAY_INDEXED = 1;
     const ARRAY_ASSOC = 2;
