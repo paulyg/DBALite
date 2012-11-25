@@ -1,5 +1,5 @@
 {
-    "name": "paulyg/DBALite",
+    "name": "paulyg/dbalite",
     "description": "A lightweight PDO based Database Abstraction Layer.",
     "version": "1.0.0",
     "type": "library",
