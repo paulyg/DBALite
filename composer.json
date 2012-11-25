@@ -1,0 +1,32 @@
+{
+    "name": "paulyg/DBALite",
+    "description": "A lightweight PDO based Database Abstraction Layer.",
+    "version": "1.0.0",
+    "type": "library",
+    "keywords": ["database", "abstraction", "pdo", "mysql", "postgres", "sqlite", "query"],
+    "homepage": "https://github.com/paulyg/DBALite",
+    "license": "LGPL-3.0+",
+    "authors": [
+        {
+            "name": "Paul Garvin",
+            "email": "paul@paulgarvin.net",
+            "homepage": "http://www.paulgarvin.net/blog/"
+        }
+    ],
+    "support": {
+        "wiki": "https://github.com/paulyg/DBALite/wiki",
+        "issues": "https://github.com/paulyg/DBALite/issues",
+        "source": "https://github.com/paulyg/DBALite"
+    },
+    "require": {
+        "ext-pdo": "*"
+    },
+    "suggest": {
+        "ext-pdo-mysql": "In order to use DBALite with MySQL databases.",
+        "ext-pdo-pqsql": "In order to use DBALite with PostgreSQL databases.",
+        "ext-pdo-sqlite": "In oreder to use DBALite with SQLite Databases."
+    },
+    "autoload": {
+        "files": ["src/DBALite.php"]
+    }
+}
