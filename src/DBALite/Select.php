@@ -274,7 +274,9 @@ class DBALite_Select
                 case 'NOT LIKE':
                     // one $data arg
                     if (is_scalar($data)) {
-                        $data = $this->_adapter->quote("%$data%");
+                        if (strpos($data, '%') === false) { 
+                            $data = $this->_adapter->quote("%$data%");
+                        }
                         $where = "$col $expr $data";
                     }
                     break;

@@ -42,7 +42,7 @@ class DBALite
     /**
      * Class constants
      */
-    const VERSION = '1.0.2';
+    const VERSION = '1.0.3';
     const ARRAY_MIXED = 0;
     const ARRAY_INDEXED = 1;
     const ARRAY_ASSOC = 2;
