@@ -1,7 +1,6 @@
 {
     "name": "paulyg/dbalite",
     "description": "A lightweight PDO based Database Abstraction Layer.",
-    "version": "1.0.0",
     "type": "library",
     "keywords": ["database", "abstraction", "pdo", "mysql", "postgres", "sqlite", "query"],
     "homepage": "https://github.com/paulyg/DBALite",
