@@ -23,7 +23,7 @@
     "suggest": {
         "ext-pdo-mysql": "In order to use DBALite with MySQL databases.",
         "ext-pdo-pqsql": "In order to use DBALite with PostgreSQL databases.",
-        "ext-pdo-sqlite": "In oreder to use DBALite with SQLite Databases."
+        "ext-pdo-sqlite": "In order to use DBALite with SQLite Databases."
     },
     "autoload": {
         "files": ["src/DBALite.php"]

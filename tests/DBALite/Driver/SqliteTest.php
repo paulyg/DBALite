@@ -71,6 +71,12 @@ class DBALite_Driver_SqliteTest extends DBALite_Driver_CommonTests
         $this->assertEquals($expected, $dbh->quote('testme'));
     }
 
+    public function testQuoteStringWithApostropheInMiddle()
+    {
+        $dbh = self::$dbaliteConn;
+        $this->assertEquals("'Scotty O''Brian'", $dbh->quote("Scotty O'Brian"));
+    }
+
     public function testQuoteIdentifier()
     {
         $expected = '"firstname"';

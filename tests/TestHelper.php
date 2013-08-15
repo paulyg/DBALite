@@ -37,10 +37,10 @@ set_include_path(get_include_path()	. PATH_SEPARATOR . $test_dir . PATH_SEPARATO
 define('DATA_DIR', $test_dir . DIRECTORY_SEPARATOR . 'Data' . DIRECTORY_SEPARATOR);
 
 require_once 'DBALite.php';
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Extensions/Database/TestCase.php';
+//require_once 'PHPUnit/Framework.php';
+//require_once 'PHPUnit/Extensions/Database/TestCase.php';
 require_once 'DBALiteTest.php';
-require_once 'DBALite/DriverAbstractTest.php';
-require_once 'DBALite/SelectTest.php';
-require_once 'DBALite/Driver/CommonTests.php';
+//require_once 'DBALite/DriverAbstractTest.php';
+//require_once 'DBALite/SelectTest.php';
+//require_once 'DBALite/Driver/CommonTests.php';
 require_once 'DBALite/Statement/CommonTests.php';
