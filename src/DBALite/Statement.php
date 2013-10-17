@@ -156,19 +156,10 @@ class DBALite_Statement
      */
     public function __call($method, $params)
     {
-        switch ($method) {
-            case 'getAttribute':
-            case 'setAttribute':
-            case 'errorCode':
-            case 'errorInfo':
-            case 'rowCount':
-            case 'columnCount':
-            case 'closeCursor':
-            case 'nextRowset':
-                return call_user_func_array(array($this->_stmt, $method), $params);
-            default:
-                throw new DBALite_Exception("Call to undefined method: $method. Not a valid PDO or DBALite method.");
+        if (function_exists(array($this->_stmt, $method))) {
+            return call_user_func_array(array($this->_stmt, $method), $params);
         }
+        throw new DBALite_Exception("Call to undefined method: $method. Not a valid PDO or DBALite method.");
     }
 
     /**
