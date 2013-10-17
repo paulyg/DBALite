@@ -50,10 +50,14 @@
  *
  * PostgreSQL test database setup:
  * 1) Start the PostgreSQL command line client with superuser privlege: 'sudo -u postgres psql'.
- * 2) "CREATE DATABASE DBALiteTest;"
+ * 2) "CREATE DATABASE "DBALiteTest";"
  * 3) "CREATE USER dbalite WITH PASSWORD 'testme'"
  * 4) 'GRANT ALL ON DATABASE "DBALiteTest" TO "dbalite";'
  * 5) Run the CREATE TABLE statements located in 'tests/Data/PostgreSql_Test_Db_Schema.sql'.
+ * 6) Exit psql with the command '\q'.
+ * 7) Restart psql: 'sudo -u postgres psql -d "DBALiteTest"'.
+ * 8) 'GRANT ALL ON "Products" TO dbalite;'
+ * 9) 'GRANT ALL ON "Cars" TO dbalite; GRANT ALL ON "Cars_id_seq" TO dbalite;'
  *
  * The singleton functionality in class DBALite is not tested because it
  * prevents further tests from being run. To test this functionality run
@@ -84,11 +88,12 @@ class DBALiteTestSuite
             require_once('DBALite/Driver/MysqlTest.php');
             require_once('DBALite/Statement/MysqlTest.php');
             try {
-                $con = new Pdo('mysql:host=localhost;dbname=DBALite_Test', 'dbalite', 'testme');
+                $con = new PDO('mysql:host=127.0.0.1;dbname=DBALite_Test', 'dbalite', 'testme');
                 $suite->addTestSuite('DBALite_Driver_MysqlTest');
                 $suite->addTestSuite('DBALite_Statement_MysqlTest');
                 echo 'MySQL tests to be executed.' . PHP_EOL;
             } catch (PDOException $e) {
+                echo $e->getMessage() . PHP_EOL;
             }
         }
 
@@ -96,11 +101,12 @@ class DBALiteTestSuite
             require_once('DBALite/Driver/PgsqlTest.php');
             require_once('DBALite/Statement/PgsqlTest.php');
             try {
-                $con = new PDO('pgsql:host=localhost dbname=DBALiteTest', 'dbalite', 'testme');
+                $con = new PDO('pgsql:host=127.0.0.1 dbname=DBALiteTest', 'dbalite', 'testme');
                 $suite->addTestSuite('DBALite_Driver_PgsqlTest');
                 $suite->addTestSuite('DBALite_Statement_PgsqlTest');
                 echo 'PostgreSQL tests to be executed.' . PHP_EOL;
             } catch (PDOException $e) {
+                echo $e->getMessage() . PHP_EOL;
             }
         }
 

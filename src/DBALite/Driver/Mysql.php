@@ -97,9 +97,9 @@ class DBALite_Driver_Mysql extends DBALite_DriverAbstract
         PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,
         PDO::MYSQL_ATTR_LOCAL_INFILE,
         PDO::MYSQL_ATTR_INIT_COMMAND,
-        PDO::MYSQL_ATTR_READ_DEFAULT_FILE,
-        PDO::MYSQL_ATTR_READ_DEFAULT_GROUP,
-        PDO::MYSQL_ATTR_MAX_BUFFER_SIZE,
+        //PDO::MYSQL_ATTR_READ_DEFAULT_FILE,
+        //PDO::MYSQL_ATTR_READ_DEFAULT_GROUP,
+        //PDO::MYSQL_ATTR_MAX_BUFFER_SIZE,
         PDO::MYSQL_ATTR_DIRECT_QUERY,
     );
 
@@ -132,7 +132,7 @@ class DBALite_Driver_Mysql extends DBALite_DriverAbstract
         // See http://www.php.net/manual/en/mysqlinfo.concepts.charset.php
         $utf8OnConnect = false;
         if (version_compare(PHP_VERSION, '5.3.6', '>=')) {
-            $dsn .= 'charset=utf8';
+            $dsn .= ';charset=utf8';
             $utf8OnConnect = true;
         }
 
@@ -156,7 +156,7 @@ class DBALite_Driver_Mysql extends DBALite_DriverAbstract
         $this->_pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         // For some unknown reason MySQL driver still emulates prepares by default.
         $this->_pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-        if (!$utf8OnConnection) {
+        if (!$utf8OnConnect) {
             $this->_pdo->exec("SET NAMES 'utf8'");
         }
     }

@@ -31,7 +31,8 @@ class DBALite_Driver_PgsqlTest extends DBALite_Driver_CommonTests
         $config = array(
             'dbname' => 'DBALiteTest',
             'username' => 'dbalite',
-            'password' => 'testme'
+            'password' => 'testme',
+            'host' => '127.0.0.1'
         );
         self::$dbaliteConn = DBALite::factory('pgsql', $config);
     }
@@ -39,7 +40,7 @@ class DBALite_Driver_PgsqlTest extends DBALite_Driver_CommonTests
     public function getConnection()
     {
         if (!isset($this->pdoConn)) {
-            $pdoObj = new PDO('pgsql:host=localhost dbname=DBALiteTest', 'dbalite', 'testme');
+            $pdoObj = new PDO('pgsql:host=127.0.0.1 dbname=DBALiteTest', 'dbalite', 'testme');
             $this->pdoConn = $this->createDefaultDBConnection($pdoObj);
         }
 
@@ -102,7 +103,12 @@ class DBALite_Driver_PgsqlTest extends DBALite_Driver_CommonTests
             'numcyls' => 4,
             'enginesize' => 2.2
         );
-        $dbh->insert('Cars', $data);
-        $this->assertEquals(1, $dbh->lastInsertId('Cars_id'));
+        try {
+            $dbh->insert('Cars', $data);
+            $this->assertEquals(1, $dbh->lastInsertId('Cars_id'));
+        } catch (DBALite_Exception $e) {
+            echo PHP_EOL . $e . PHP_EOL;
+            throw $e;
+        }
     }
 }

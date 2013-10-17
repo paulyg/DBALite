@@ -83,7 +83,7 @@ class DBALite_DriverAbstractTest extends PHPUnit_Framework_TestCase
     {
         $dbh = self::$database;
         $ret = $dbh->getAttribute(PDO::ATTR_SERVER_VERSION);
-        $this->assertEquals(true, $ret);
+        $this->assertRegExp('/3\.\d\.\d\.\d/', $ret);
     }
 
     /**

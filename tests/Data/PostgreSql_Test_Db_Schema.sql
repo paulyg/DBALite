@@ -6,7 +6,7 @@ CREATE TABLE "Products" (
 "QuantityPerUnit" VARCHAR(20),
 "UnitPrice" NUMERIC(6,2),
 "UnitsInStock" INTEGER,
-"ReorderLevel" INTEGER,
+"ReorderLevel" INTEGER
 );
 
 CREATE TABLE "Cars" (

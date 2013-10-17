@@ -32,10 +32,11 @@ class DBALite_Statement_PgsqlTest extends DBALite_Statement_CommonTests
         $config = array(
             'dbname' => 'DBALiteTest',
             'username' => 'dbalite',
-            'password' => 'testme'
+            'password' => 'testme',
+            'host' => '127.0.0.1'
         );
         $csvfile = DATA_DIR . 'TABLE_Products.csv';
-        $pdoObj = new PDO("pgsql:dbname={$config['dbname']}", $config['username'], $config['password']);
+        $pdoObj = new PDO("pgsql:host=127.0.0.1 dbname={$config['dbname']}", $config['username'], $config['password']);
         self::$phpunitConn = new PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection($pdoObj);
         self::$dataset = new PHPUnit_Extensions_Database_Dataset_CsvDataSet();
         self::$dataset->addTable('Products', $csvfile);

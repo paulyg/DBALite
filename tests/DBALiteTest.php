@@ -93,10 +93,10 @@ class DBALiteTest extends PHPUnit_Framework_TestCase
     public function testGetDrivers()
     {
         $expected = array(
-            'mssql' => extension_loaded('pdo_odbc'),
             'mysql' => extension_loaded('pdo_mysql'),
             'pgsql' => extension_loaded('pdo_pgsql'),
-            'sqlite' => extension_loaded('pdo_sqlite')
+            'sqlite' => extension_loaded('pdo_sqlite'),
+            //'sqlsrv' => extension_loaded('pdo_sqlsrv')            
         );
         $this->assertEquals($expected, DBALite::getDrivers());
     }

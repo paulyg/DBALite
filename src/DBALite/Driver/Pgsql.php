@@ -164,6 +164,6 @@ class DBALite_Driver_Pgsql extends DBALite_DriverAbstract
             $seq = $seq . '_seq';
         }
 
-        return $this->_pdo->lastInsertId($seq);
+        return $this->_pdo->lastInsertId($this->quoteIdentifier($seq));
     }
 }

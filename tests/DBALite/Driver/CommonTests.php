@@ -86,7 +86,7 @@ abstract class DBALite_Driver_CommonTests extends PHPUnit_Extensions_Database_Te
             'ProductID',
             'ProductName',
             'SupplierID',
-            'CategoryId',
+            'CategoryID',
             'QuantityPerUnit',
             'UnitPrice',
             'UnitsInStock',

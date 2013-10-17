@@ -31,7 +31,8 @@ class DBALite_Driver_MysqlTest extends DBALite_Driver_CommonTests
         $config = array(
             'dbname' => 'DBALite_Test',
             'username' => 'dbalite',
-            'password' => 'testme'
+            'password' => 'testme',
+            'host' => '127.0.0.1'
         );
         self::$dbaliteConn = DBALite::factory('mysql', $config);
     }
@@ -39,8 +40,8 @@ class DBALite_Driver_MysqlTest extends DBALite_Driver_CommonTests
     public function getConnection()
     {
         if (!isset($this->pdoConn)) {
-            $pdoObj = new PDO('mysql:host=localhost;dbname=DBALite_Test', 'dbalite', 'testme');
-            $pdoObj->exec("SET NAMES 'utf8'");
+            $pdoObj = new PDO('mysql:host=127.0.0.1;dbname=DBALite_Test;charset=utf8', 'dbalite', 'testme');
+            //$pdoObj->exec("SET NAMES 'utf8'");
             $this->pdoConn = $this->createDefaultDBConnection($pdoObj);
         }
         
