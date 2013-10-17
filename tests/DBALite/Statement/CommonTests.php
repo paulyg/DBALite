@@ -250,6 +250,15 @@ class DBALite_Statement_CommonTests extends PHPUnit_Framework_TestCase
         return $stmt;
     }
 
+    /**
+     * @depends testFetchAllWithMode
+     */
+    public function testCall(DBALite_Statement $stmt)
+    {
+        $this->assertEquals(8, $stmt->columnCount());
+        return $stmt;
+    }
+
     public function testGetSqlDefault()
     {
         $stmt = self::$dbaliteStmt;

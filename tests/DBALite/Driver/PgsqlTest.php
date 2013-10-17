@@ -95,7 +95,12 @@ class DBALite_Driver_PgsqlTest extends DBALite_Driver_CommonTests
     {
         $dbh = self::$dbaliteConn;
 
-        $dbh->execute('TRUNCATE TABLE "Cars"');
+        try {
+            $dbh->execute('TRUNCATE TABLE "Cars" RESTART IDENTITY CASCADE');
+            } catch (DBALite_Exception $e) {
+            echo PHP_EOL . $e . PHP_EOL;
+            throw $e;
+        }
         $data = array(
             'make' => 'Honda',
             'model' => 'Prelude',

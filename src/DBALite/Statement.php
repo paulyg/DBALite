@@ -156,7 +156,7 @@ class DBALite_Statement
      */
     public function __call($method, $params)
     {
-        if (function_exists(array($this->_stmt, $method))) {
+        if (method_exists($this->_stmt, $method)) {
             return call_user_func_array(array($this->_stmt, $method), $params);
         }
         throw new DBALite_Exception("Call to undefined method: $method. Not a valid PDO or DBALite method.");

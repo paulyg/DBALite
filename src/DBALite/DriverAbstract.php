@@ -228,18 +228,10 @@ abstract class DBALite_DriverAbstract
      */
     public function __call($method, $params)
     {
-        switch ($method) {
-            case 'getAttribute':
-            case 'setAttribute':
-            case 'errorCode':
-            case 'errorInfo':
-            case 'beginTransaction':
-            case 'commit':
-            case 'rollBack':
-                return call_user_func_array(array($this->_pdo, $method), $params);
-            default:
-                throw new DBALite_Exception("Call to undefined method: $method. Not a valid PDO or DBALite method.");
+        if (method_exists($this->_pdo, $method)) {
+            return call_user_func_array(array($this->_pdo, $method), $params);
         }
+        throw new DBALite_Exception("Call to undefined method: $method. Not a valid PDO or DBALite method.");
     }
 
     /**
